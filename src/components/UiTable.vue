@@ -104,7 +104,9 @@ export default {
       let loopForward = this.mostRecentRowIndex + 1
       while (loopForward < this.sortedRows.length) {
         const loopForwardSelected = this.selectedRowIndexes.findIndex(index => index === loopForward)
+        // If the row clicked is higher than the most recently clicked row
         if (rowIndex > this.mostRecentRowIndex) {
+
           if (loopForwardSelected === -1) {
             if (loopForward <= rowIndex) {
               this.selectedRowIndexes.push(loopForward)
@@ -127,6 +129,7 @@ export default {
       while (loopBackward > -1) {
         const loopBackwardSelected = this.selectedRowIndexes.findIndex(index => index === loopBackward)
         if (rowIndex < this.mostRecentRowIndex) {
+
           if (loopBackwardSelected === -1) {
             if (loopBackward >= rowIndex) {
               this.selectedRowIndexes.push(loopBackward)
@@ -134,8 +137,7 @@ export default {
             } else {
               break;
             }
-            
-          } else if (loopBackwardSelected > -1 && loopBackward < rowIndex) {
+          } else if (loopBackward < rowIndex) {
             Vue.delete(this.selectedRowIndexes, loopBackwardSelected)
           }
         } else if (loopBackwardSelected > -1) {
@@ -150,13 +152,14 @@ export default {
       if (findRow > -1) {
         this.selectedRowIndexes.splice(findRow, 1)
         // The rows have been shifted -1
-        if (this.selectedRowIndexes[findRow]) {
-          this.mostRecentRowIndex = rowIndex
-        } else if (this.selectedRowIndexes.length > 0) {
-          this.mostRecentRowIndex = this.selectedRowIndexes.length - 1
-        } else {
-          this.mostRecentRowIndex = 0
+        // Higher than the one we've selected
+
+        if (this.selectedRowIndexes.findIndex(sIndex => sIndex === rowIndex + 1) > -1) {
+          this.mostRecentRowIndex = rowIndex + 1
+        } else if (this.selectedRowIndexes.findIndex(sIndex => sIndex === rowIndex - 1) > -1) {
+          this.mostRecentRowIndex = rowIndex - 1
         }
+        
       } else {
         this.selectedRowIndexes.push(rowIndex)
         this.mostRecentRowIndex = rowIndex
