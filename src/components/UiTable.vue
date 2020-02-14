@@ -121,6 +121,8 @@ export default {
           }
         } else if (loopForwardSelected > -1) {
           Vue.delete(this.selectedRowIndexes, loopForwardSelected)
+        } else {
+          break;
         }
         loopForward++
       }
@@ -142,6 +144,8 @@ export default {
           }
         } else if (loopBackwardSelected > -1) {
           Vue.delete(this.selectedRowIndexes, loopBackwardSelected)
+        } else {
+          break;
         }
         loopBackward--;
       }
@@ -281,7 +285,7 @@ thead th {
   text-overflow: ellipsis;
   height: inherit;
 }
-.cell__overflow:active {
+.cell--th .cell__overflow:active {
   background: #efefef;
 }
 tr {

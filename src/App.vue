@@ -48,7 +48,6 @@ export default {
       Mousetrap.bind(['meta+1', 'meta+2', 'meta+3', 'meta+4', 'meta+5', 'meta+6', 'meta+7', 'meta+8', 'meta+9', 'meta+0'], e => {
         let tab
         if (e.key == 0) {
-          console.log('here')
           tab = this.tabs[this.tabs.length - 1]
         } else {
           tab = this.tabs[e.key - 1]
