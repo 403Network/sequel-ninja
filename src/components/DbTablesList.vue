@@ -2,35 +2,41 @@
   <div>
     <h3>Tables</h3>
     <ul tabindex="1">
-      <li :tabindex="index" v-for="(tableName, index) in tableNames" :key="index" :class="selectedTableClasses(tableName)" @mousedown="selectTable({ tab: selectedTab, tableName })">{{ tableName }}</li>
+      <li
+        :tabindex="index"
+        v-for="(tableName, index) in tableNames"
+        :key="index"
+        :class="selectedTableClasses(tableName)"
+        @mousedown="selectTable({ tab: selectedTab, tableName })"
+      >
+        {{ tableName }}
+      </li>
     </ul>
   </div>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions } from "vuex"
 
 export default {
   computed: {
-    ...mapGetters('tabs', ['selectedTab', 'selectedTable']),
-    tableNames () {
+    ...mapGetters("tabs", ["selectedTab", "selectedTable"]),
+    tableNames() {
       return this.selectedTab.tableNames
-    },
+    }
   },
   methods: {
-    ...mapActions('tabs', ['loadTables', 'selectTable']),
-    selectedTableClasses (tableName) {
-      return [
-        this.isSelectedTable(tableName) ? 'selected' : ''
-      ]
+    ...mapActions("tabs", ["loadTables", "selectTable"]),
+    selectedTableClasses(tableName) {
+      return [this.isSelectedTable(tableName) ? "selected" : ""]
     },
-    isSelectedTable (tableName) {
+    isSelectedTable(tableName) {
       return tableName === this.selectedTable.name
-    },
+    }
   },
-  mounted () {
+  mounted() {
     this.loadTables(this.selectedTab)
-  },
+  }
 }
 </script>
 

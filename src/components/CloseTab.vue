@@ -1,31 +1,40 @@
 <template>
-  <div class="tab-menu__tab-close" :class="closeBtnClasses" @click.stop.prevent="close(tab.uid)" v-if="!isDisabled">X</div>
+  <div
+    class="tab-menu__tab-close"
+    :class="closeBtnClasses"
+    @click.stop.prevent="close(tab.uid)"
+    v-if="!isDisabled"
+  >
+    X
+  </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions } from "vuex"
 
 export default {
-  props: ['tab'],
-  data () {
+  props: ["tab"],
+  data() {
     return {
       isDisabled: false
     }
   },
   computed: {
-    tabs () {
+    tabs() {
       return this.$store.state.tabs.tabs
     },
-    selectedTabUid () {
+    selectedTabUid() {
       return this.$store.state.tabs.selectedTabUid
     },
-    closeBtnClasses () {
-      return this.selectedTabUid === this.tab.uid ? 'tab-menu__tab-close--selected' : null
+    closeBtnClasses() {
+      return this.selectedTabUid === this.tab.uid
+        ? "tab-menu__tab-close--selected"
+        : null
     }
   },
   methods: {
-    ...mapActions('tabs', ['closeTab']),
-    close (uid) {
+    ...mapActions("tabs", ["closeTab"]),
+    close(uid) {
       if (this.isDisabled) {
         return
       }
@@ -39,10 +48,9 @@ export default {
 </script>
 
 <style>
-
 .tab-menu__tab:hover .tab-menu__tab-close {
-  opacity: 1;
-  /* background: #efefef; */
+  opacity: 1
+  /* background: #efefef */
 }
 .tab-menu__tab-close {
   border-radius: 0.25em;

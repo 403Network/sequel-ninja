@@ -4,92 +4,41 @@
       <div>Sequel Ninja</div>
       <tab-menu></tab-menu>
     </header>
-    <router-view class="router-view"></router-view>
-    <ul v-for="(result, index) in sortedResults" :key="index">
-        <li>{{ result }}</li>
-    </ul>
+    <transition name="fade">
+      <router-view class="router-view"></router-view>
+    </transition>
   </div>
 </template>
 
-<script>
-import TabMenu from './components/TabMenu.vue'
-import { mapActions } from 'vuex'
-import Mousetrap from 'mousetrap'
+<script lang="ts">
+import TabMenu from "@/components/TabMenu.vue"
+import * as v from "@vue/composition-api"
+import store from "@/store"
+import { Tab } from "@/store/modules/tabs/contracts.ts"
+import useAppMouseBindings from "@/composables/useAppMouseBindings"
+import useAppTabCoordinator from "@/composables/useAppTabCoordinator"
+import { computed } from "@vue/composition-api"
+import { ReactiveState } from '@/contracts/ComponentStates'
+import { Route } from 'vue-router';
 
-export default {
-  name: 'App',
-  data () {
-    return {
-      connection: null,
-      sortedResults: []
-    }
-  },
+export default v.createComponent({
+  name: "App",
   components: {
-    TabMenu,
+    TabMenu
   },
-  computed: {
-    tabs () {
-     return this.$store.state.tabs.tabs
-    }
-  },
-  methods: {
-    ...mapActions('tabs', ['createTab', 'changeTab', 'closeSelectedTab']),
-    addListeners () {
-      Mousetrap.bind(['meta+t'], () => {
-        this.createTab()
-      })
-      Mousetrap.bind(['meta+w'], (e) => {
-        if (this.tabs.length > 1) {
-          e.preventDefault()
-          this.closeSelectedTab()
-        }
-      })
-      
-      Mousetrap.bind(['meta+1', 'meta+2', 'meta+3', 'meta+4', 'meta+5', 'meta+6', 'meta+7', 'meta+8', 'meta+9', 'meta+0'], e => {
-        let tab
-        if (e.key == 0) {
-          tab = this.tabs[this.tabs.length - 1]
-        } else {
-          tab = this.tabs[e.key - 1]
-        }
-        if (tab) {
-          this.changeTab(tab.uid)
-        }
-      })
-    },
-    removeListeners () {
+  setup(props, { root }: v.SetupContext) {
+    const state = v.reactive({
+      tabs: computed(() => store.state.tabs.tabs)
+    }) as ReactiveState
+    console.log(root.$route)
+    useAppTabCoordinator(state.tabs as Tab[], root as ComponentInstance)
+    useAppMouseBindings(state.tabs as Tab[])
 
-    },
-    stop
-  },
-  watch: {
-    '$route.params.uid': {
-      immediate: true,
-      async handler (to) {
-        const tab = this.tabs.find(tab => tab.uid === to)
-        if (tab) {
-          this.changeTab(to.uid)
-        } else if (this.tabs.length > 0) {
-          this.changeTab(this.tabs[0].uid)
-        } else {
-          const uid = await this.createTab()
-          this.$router.replace({ name: 'tab-home', params: { uid }})
-          this.$router.replace('/')
-        }
-      }
+    return {
+      tabs: state.tabs
     }
-  },
-  async mounted () {
-    this.addListeners()
-    if (this.tabs.length === 0) {
-      const tabUid = await this.createTab()
-      this.changeTab(tabUid)
-    }
-  },
-  beforeDestroy () {
-    this.removeListeners()
   }
-}
+})
 </script>
 
 <style scoped>
@@ -103,10 +52,9 @@ header > div {
 }
 </style>
 
-
 <style>
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 html {
   font-size: 10pt;
@@ -140,5 +88,13 @@ body {
 }
 .router-view--flex {
   flex-direction: row;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.32s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
 }
 </style>

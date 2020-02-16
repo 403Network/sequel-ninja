@@ -1,49 +1,57 @@
 <template>
-  <transition-group
-    tag="ul"
-    class="tab-menu"
-    name="fade"
-  >
-    <li v-for="tab in tabs" :class="tabClasses(tab)" class="tab-menu__tab"  :key="tab.uid" :disabled="tab.disabled !== false" @click="changeTab(tab.uid)">
+  <transition-group tag="ul" class="tab-menu" name="fade">
+    <li
+      v-for="tab in state.tabs"
+      :class="tabClasses(tab)"
+      class="tab-menu__tab"
+      :key="tab.uid"
+      :disabled="tab.disabled !== false"
+      @click="changeTab(tab.uid)"
+    >
       <div class="tab-menu__link">
-        <span class="tab-menu__tab-wrap">{{ tab.name }}</span>
+        <span class="tab-menu__tab-wrap">{{ tab.name }} </span>
+      
       </div>
-      <close-tab :tab="tab" v-if="showCloseBtn">X</close-tab>
+      <close-tab :tab="tab" v-if="state.showCloseBtn">X</close-tab>
     </li>
-    <li class="tab-menu__tab tab-menu__tab--new-tab" key="tabby" @click="createTab">+</li>
+    <li
+      class="tab-menu__tab tab-menu__tab--new-tab"
+      key="tabby"
+      @click="createTab"
+    >
+      +
+    </li>
   </transition-group>
 </template>
 
-
 <script>
-import { mapActions } from 'vuex'
-import CloseTab from './CloseTab'
+import CloseTab from "./CloseTab"
+import store from '@/store'
+import * as v from '@vue/composition-api'
 
 export default {
   components: {
     CloseTab,
   },
-  data () {
-    return {
+  setup () {
+    const state = v.reactive({
       disabled: false,
+      tabs: v.computed(() => store.state.tabs.tabs),
+      selectedTabUid: v.computed(() => store.state.tabs.selectedTabUid),
+      showCloseBtn: v.computed(() => store.state.tabs.tabs.length > 1),
+    })
+
+    const tabClasses = (tab) => {
+        return tab.uid === state.selectedTabUid ? "tab-menu__tab--selected" : null
     }
-  },
-  computed: {
-    tabs () {
-      return this.$store.state.tabs.tabs
-    },
-    selectedTabUid () {
-      return this.$store.state.tabs.selectedTabUid
-    },
-    showCloseBtn () {
-      return this.tabs.length > 1
-    },
-  },
-  methods: {
-    ...mapActions('tabs', ['createTab', 'changeTab']),
-    tabClasses (tab) {
-      return tab.uid === this.selectedTabUid ? 'tab-menu__tab--selected' : null
-    },
+
+    return {
+      state,
+      // methods
+      tabClasses,
+      changeTab: store.dispatch.tabs.changeTab,
+      createTab: store.dispatch.tabs.createTab,
+    }
   }
 }
 </script>
@@ -89,10 +97,10 @@ export default {
   transform: scale(0.8);
 }
 .tab-menu__tab--new-tab:hover {
-    background: #dcdcdc;
+  background: #dcdcdc;
 }
 .tab-menu__tab--new-tab:active {
-    background: #c6c6c6;
+  background: #c6c6c6;
 }
 .tab-menu__tab-wrap {
   min-width: 100px;

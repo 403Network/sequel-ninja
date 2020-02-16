@@ -1,32 +1,27 @@
 <template>
-  <router-view v-if="hasConnection"></router-view>
-  <start-connection @connected="connected" :uid="uid" v-else />
+  <router-view v-if="state.hasConnection"></router-view>
+  <start-connection :uid="state.uid" v-else />
 </template>
 
 <script>
-import StartConnection from './StartConnection'
+import StartConnection from "./StartConnection"
+import store from '@/store'
+import * as v from '@vue/composition-api'
 
 export default {
   components: {
     StartConnection
   },
-  computed: {
-    hasConnection () {
-      return this.db && Boolean(this.db.connection)
-    },
-    db () {
-      return this.$store.state.tabs.tabs.find(tab => tab.uid === this.uid)
-    },
-    uid () {
-      return this.$store.state.tabs.selectedTabUid
+  setup() {
+    const state = v.reactive({
+      uid: v.computed(() => store.state.tabs.selectedTabUid),
+      tab: v.computed(() => store.state.tabs.tabs.find(tab => tab.uid === state.uid)),
+      hasConnection: v.computed(() => state.tab && state.tab.connection.hasConnection())
+    })
+
+    return {
+      state,
     }
   },
-  methods: {
-    connected () {
-    },
-  },
-  mounted () {
-
-  }
 }
 </script>

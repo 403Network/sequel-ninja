@@ -3,56 +3,81 @@
     <form @submit.prevent="submit" class="conn-form">
       <div class="conn-form__block">
         <label for="">Name</label>
-        <input type="text" class="conn-form__input" v-model="connectionForm.name">
+        <input
+          type="text"
+          class="conn-form__input"
+          v-model="connectionForm.name"
+        />
       </div>
       <div class="conn-form__block">
         <label for="">Host</label>
-        <input type="text" class="conn-form__input" v-model="connectionForm.host">
+        <input
+          type="text"
+          class="conn-form__input"
+          v-model="connectionForm.host"
+        />
       </div>
       <div class="conn-form__block">
         <label for="" class="">User</label>
-        <input type="text" class="conn-form__input" v-model="connectionForm.user">
+        <input
+          type="text"
+          class="conn-form__input"
+          v-model="connectionForm.user"
+        />
       </div>
       <div class="conn-form__block">
         <label for="">Pass</label>
-        <input type="password" class="conn-form__input" v-model="connectionForm.password">
+        <input
+          type="password"
+          class="conn-form__input"
+          v-model="connectionForm.password"
+        />
       </div>
       <div class="conn-form__block">
         <label for="">Database</label>
-        <input type="text" class="conn-form__input" v-model="connectionForm.database">
+        <input
+          type="text"
+          class="conn-form__input"
+          v-model="connectionForm.database"
+        />
       </div>
       <div class="conn-form__block">
-        <input type="submit" class="conn-form__btn" @click.prevent="submit" value="Start Connection">
+        <input
+          type="submit"
+          class="conn-form__btn"
+          @click.prevent="submit"
+          value="Start Connection"
+        />
       </div>
     </form>
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions } from "vuex"
 
 export default {
-  data () {
+  data() {
     return {
       connectionForm: {
-        name: 'My First Connection',
-        host: '127.0.0.1',
-        user: 'root',
+        name: "My First Connection",
+        host: "127.0.0.1",
+        user: "root",
         password: null,
-        database: 'privex_frontend'
+        database: "privex_frontend"
       }
     }
   },
-  props: ['uid'],
+  props: ["uid"],
   methods: {
-    ...mapActions('tabs', ['createConnection']),
-    async submit () {
+    ...mapActions("tabs", ["createConnection"]),
+    async submit() {
       try {
         const connection = await this.createConnection({
-          uid: this.uid,
-          ...this.connectionForm,
+          uid: this.$store.state.tabs.selectedTabUid,
+          config: this.connectionForm
         })
-        this.$emit('connected', connection)
+        this.$emit("connected", connection)
       } catch (e) {
         console.log(e)
       }
@@ -63,7 +88,7 @@ export default {
 
 <style>
 .conn-form {
-  border-radius: .5rem;
+  border-radius: 0.5rem;
   background: #efefef;
   align-self: center;
   padding: 2rem;
@@ -101,6 +126,5 @@ export default {
 }
 .conn-form__btn:active {
   background: rgb(197, 44, 143);
-
 }
 </style>
