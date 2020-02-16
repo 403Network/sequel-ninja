@@ -3,25 +3,27 @@
   <start-connection :uid="state.uid" v-else />
 </template>
 
-<script>
-import StartConnection from "./StartConnection"
+<script lang="ts">
+import StartConnection from "./StartConnection.vue"
 import store from '@/store'
 import * as v from '@vue/composition-api'
+import { ReactiveState } from '@/contracts/ComponentStates';
+import { Tab } from '@/store/modules/tabs/contracts';
 
-export default {
+export default v.createComponent({
   components: {
     StartConnection
   },
-  setup() {
-    const state = v.reactive({
+  setup () {
+    const state: any = v.reactive({
       uid: v.computed(() => store.state.tabs.selectedTabUid),
-      tab: v.computed(() => store.state.tabs.tabs.find(tab => tab.uid === state.uid)),
-      hasConnection: v.computed(() => state.tab && state.tab.connection.hasConnection())
-    })
+      tab: v.computed(() => store.state.tabs.tabs.find((tab: Tab) => tab.uid === state.uid)),
+      hasConnection: v.computed(() => state.tab && state.tab.connection.hasConnection && state.tab.connection.hasConnection)
+    }) as ReactiveState
 
     return {
       state,
     }
   },
-}
+})
 </script>

@@ -1,5 +1,6 @@
 export interface Database {
   connect(DatabaseConfig: object): Promise<any>
+  hasConnection: boolean
   query(sql: string): Promise<any>
   close(): Promise<any>
 }

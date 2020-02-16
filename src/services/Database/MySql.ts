@@ -5,7 +5,7 @@ export default class MySql implements Database {
   private _connection: DatabasePromiseless | null = null
   private noConnectionException = "No Connection found"
 
-  public hasConnection(): boolean {
+  public get hasConnection(): boolean {
     if (!this._connection) {
       return false
     }

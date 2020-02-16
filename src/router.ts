@@ -5,7 +5,7 @@ import ContentTab from "@/components/ContentTab.vue"
 
 Vue.use(VueRouter)
 
-export default new VueRouter({
+export default new VueRouter(<any>{
   routes: [
     {
       path: "/",
