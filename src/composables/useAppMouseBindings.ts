@@ -3,41 +3,37 @@ import store from "@/store"
 import { Tab } from "@/store/modules/tabs/contracts"
 import * as v from "@vue/composition-api"
 
+interface MouseBinding {
+  action: string
+  binding: string | string[]
+  handler: (e: ExtendedKeyboardEvent) => void
+}
+
+
 export default function useAMouseBindings(tabs: Tab[]) {
-  const newTab = {
+  const newTab: MouseBinding = {
     action: "newTab",
     binding: "meta+t",
-    handler: (e: ExtendedKeyboardEvent): any => {
+    handler: (e: ExtendedKeyboardEvent): void => {
       if (tabs.length === 0) return
       store.dispatch.tabs.createTab(null)
     }
   }
 
-  const closeTab = {
+  const closeTab: MouseBinding = {
     action: "closeTab",
     binding: "meta+w",
-    handler: (e: any): any => {
+    handler: (e: any): void => {
       if (tabs.length === 1) return
       e.preventDefault()
       store.dispatch.tabs.closeSelectedTab(null)
     }
   }
 
-  const switchTab = {
+  const switchTab: MouseBinding = {
     action: "switchTab",
-    binding: [
-      "meta+1",
-      "meta+2",
-      "meta+3",
-      "meta+4",
-      "meta+5",
-      "meta+6",
-      "meta+7",
-      "meta+8",
-      "meta+9",
-      "meta+0"
-    ],
-    handler: (e: any): any => {
+    binding: ["meta+1", "meta+2", "meta+3", "meta+4", "meta+5", "meta+6", "meta+7", "meta+8", "meta+9", "meta+0"],
+    handler: (e: any): void => {
       e.preventDefault()
       const tabKey = e.key === 0 ? tabs.length - 1 : e.key - 1
       if (tabs[tabKey]) {
