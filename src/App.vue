@@ -30,13 +30,9 @@ export default v.createComponent({
     const state = v.reactive({
       tabs: computed(() => store.state.tabs.tabs)
     }) as ReactiveState
-    console.log(root.$route)
-    useAppTabCoordinator(state.tabs as Tab[], root as ComponentInstance)
-    useAppMouseBindings(state.tabs as Tab[])
 
-    return {
-      tabs: state.tabs
-    }
+    useAppTabCoordinator(state.tabs, root)
+    useAppMouseBindings(state.tabs as Tab[])
   }
 })
 </script>
