@@ -1,24 +1,12 @@
 <template>
   <transition-group tag="ul" class="tab-menu" name="fade">
-    <li
-      v-for="tab in state.tabs"
-      :class="tabClasses(tab)"
-      class="tab-menu__tab"
-      :key="tab.uid"
-      :disabled="tab.disabled !== false"
-      @click="changeTab(tab.uid)"
-    >
+    <li v-for="tab in state.tabs" :class="tabClasses(tab)" class="tab-menu__tab" :key="tab.uid" :disabled="tab.disabled !== false" @click="changeTab(tab.uid)">
       <div class="tab-menu__link">
         <span class="tab-menu__tab-wrap">{{ tab.name }} </span>
-      
       </div>
       <close-tab :tab="tab" v-if="state.showCloseBtn">X</close-tab>
     </li>
-    <li
-      class="tab-menu__tab tab-menu__tab--new-tab"
-      key="tabby"
-      @click="createTab"
-    >
+    <li class="tab-menu__tab tab-menu__tab--new-tab" key="tabby" @click="createTab">
       +
     </li>
   </transition-group>
@@ -71,7 +59,7 @@ export default {
   flex-grow: 1;
   font-size: 0.9rem;
   flex: 1;
-  color: #636363;
+  color: $test;
   cursor: default;
   overflow: hidden;
   position: relative;

@@ -3,52 +3,24 @@
     <table class="table" ref="table" v-if="fields">
       <thead>
         <tr class="row row--th">
-          <th
-            v-for="(field, index) in fields"
-            :key="index"
-            ref="tableThs"
-            class="cell cell--th"
-            @mousedown="setSort(field.name)"
-          >
+          <th v-for="(field, index) in fields" :key="index" ref="tableThs" class="cell cell--th" @mousedown="setSort(field.name)">
             <div class="cell__overflow">
               <span class="cell__content">{{ field.name }}</span>
             </div>
-            <div
-              class="cell__arrow"
-              :class="sorting.reverse ? 'cell__arrow--reverse' : ''"
-              v-if="isSortedField(field.name)"
-            >
+            <div class="cell__arrow" :class="sorting.reverse ? 'cell__arrow--reverse' : ''" v-if="isSortedField(field.name)">
               ^
             </div>
-            <div
-              class="cell__grip"
-              @mousedown.stop="gripMouseDown"
-              @dblclick="adjustSingleColumn"
-            ></div>
+            <div class="cell__grip" @mousedown.stop="gripMouseDown" @dblclick="adjustSingleColumn"></div>
           </th>
           <th class="cell cell--th-remainder" ref=""></th>
         </tr>
       </thead>
       <tbody>
-        <tr
-          v-for="(row, index) in sortedRows"
-          :key="index"
-          :tabindex="index"
-          class="row"
-          :class="rowClasses(index)"
-          @mousedown.exact.stop="selectOnly(index)"
-          @mousedown.shift.exact.stop="selectTo(index)"
-          @mousedown.meta.stop="selectToggle(index)"
-        >
-          <td
-            v-for="(item, itemIndex) in Object.keys(row)"
-            :key="itemIndex"
-            class="cell"
+        <tr v-for="(row, index) in sortedRows" :key="index" :tabindex="index" class="row" :class="rowClasses(index)" @mousedown.exact.stop="selectOnly(index)" @mousedown.shift.exact.stop="selectTo(index)" @mousedown.meta.stop="selectToggle(index)">
+          <td v-for="(item, itemIndex) in Object.keys(row)" :key="itemIndex" class="cell"
           >
             <div class="cell__overflow">
-              <span class="cell__content">{{
-                row[fields[itemIndex].name]
-              }}</span>
+              <span class="cell__content">{{ row[fields[itemIndex].name] }}</span>
             </div>
           </td>
           <td class="cell cell--td-remainder"></td>
@@ -100,7 +72,6 @@ export default {
       return this.sorting.fieldName === fieldName
     },
     setSort(fieldName) {
-      console.log("derp")
       if (this.sorting.fieldName === fieldName) {
         if (this.sorting.reverse) {
           this.sorting.fieldName = null
@@ -210,7 +181,7 @@ export default {
         this.selectedRowIndexes.findIndex(
           selectedRowIndex => selectedRowIndex === rowIndex
         ) > -1
-          ? "row--selected"
+          ? "row--selected selected"
           : null
       ]
     },
@@ -274,9 +245,7 @@ export default {
         if (this.fields.length === 0) {
           return
         }
-        console.log("here", this.$refs.tableThs)
         this.$nextTick(() => {
-          console.log(this.$refs.tableThs)
           this.initialColumnAdjust(this.$refs.tableThs)
         })
       }

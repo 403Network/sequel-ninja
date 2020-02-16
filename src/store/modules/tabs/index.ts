@@ -121,7 +121,6 @@ const actions = {
   },
   createConnection({ commit, state }: any, payload: { config: DatabaseConfig, uid: string }) {
     return new Promise((resolve, reject) => {
-        console.log(payload.uid)
       const tab: Tab = state.tabs.find((tab: Tab) => tab.uid === payload.uid)
       tab.connection.connect(payload.config)
       commit("CHANGE_TAB_NAME", {
@@ -134,8 +133,6 @@ const actions = {
   changeTab({ commit, state }: any, uid: string) {
     return new Promise((resolve, reject) => {
       try {
-          console.log('set_tab')
-          console.log(uid)
         if (state.selectedTabUid !== uid) {
           Router.replace({ name: "tab-home", params: { uid: uid } })
           commit("SET_TAB", uid)

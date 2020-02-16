@@ -1,13 +1,15 @@
 <template>
   <div>
     <h3>Tables</h3>
-    <ul tabindex="1">
+    <ul tabindex="1" >
       <li
+        ref="tableNameItems"
         :tabindex="index"
         v-for="(tableName, index) in tableNames"
         :key="index"
         :class="selectedTableClasses(tableName)"
         @mousedown="selectTable({ tab: selectedTab, tableName })"
+        @blur="test"
       >
         {{ tableName }}
       </li>
@@ -27,14 +29,38 @@ export default {
   },
   methods: {
     ...mapActions("tabs", ["loadTables", "selectTable"]),
+    test (e) {
+      e.preventDefault()
+    },
+    refocusSelected() {
+      const tableRow = this.$refs.tableNameItems.find(item => item.classList.contains('selected'))
+      tableRow.focus()
+    },
     selectedTableClasses(tableName) {
-      return [this.isSelectedTable(tableName) ? "selected" : ""]
+      return [this.isSelectedTable(tableName) ? "selected selected--persist" : ""]
     },
     isSelectedTable(tableName) {
       return tableName === this.selectedTable.name
     }
   },
   mounted() {
+    document.body.addEventListener('mousedown', (e) => {
+      e.preventDefault()
+      const target = e.path.find(targ => targ.classList && targ.classList.contains('selected'))
+      const previousFocus = document.querySelector('.selected.selected--persist')
+      if (!target) {
+        if (previousFocus && !previousFocus.classList.contains('selected--old')) {
+          previousFocus.focus()
+        } else {
+          const childSelector = e.target.querySelector('.selected.selected--persist')
+          if (childSelector) childSelector.focus()
+        }
+      } else {
+        target.classList.remove('selected--old')
+        target.focus()
+        if (previousFocus) previousFocus.classList.add('selected--old')
+      }
+    })
     this.loadTables(this.selectedTab)
   }
 }

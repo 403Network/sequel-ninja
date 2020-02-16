@@ -2,10 +2,10 @@
   <div id="app">
     <header>
       <div>Sequel Ninja</div>
-      <tab-menu></tab-menu>
+      <tab-menu />
     </header>
     <transition name="fade">
-      <router-view class="router-view"></router-view>
+      <router-view class="router-view" />
     </transition>
   </div>
 </template>
@@ -19,7 +19,8 @@ import useAppMouseBindings from "@/composables/useAppMouseBindings"
 import useAppTabCoordinator from "@/composables/useAppTabCoordinator"
 import { computed } from "@vue/composition-api"
 import { ReactiveState } from '@/contracts/ComponentStates'
-import { Route } from 'vue-router';
+import { Route } from 'vue-router'
+
 
 export default v.createComponent({
   name: "App",

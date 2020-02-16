@@ -6,20 +6,16 @@
 // }
 
 module.exports = {
-  // extends: [
-    // "plugin:vue/recommended",
-    // "plugin:@typescript-eslint/recommended"
-  // ]
-  // parserOptions: {
-  //   parser: "@typescript-eslint/parser"
-  // },
-  plugins: ["@typescript-eslint"],
+  parserOptions: {
+    parser: "@typescript-eslint/parser",
+    sourceType: "module"
+  },
   extends: [
-    'plugin:vue/essential',
-    'eslint:recommended',
+    'plugin:vue/recommended',
     '@vue/typescript'
   ],
-  parserOptions: {
-    parser: '@typescript-eslint/parser'
-  },
+  rules: {
+    'vue/singleline-html-element-content-newline': 'off',
+    'vue/max-attributes-per-line': 'off',
+  }
 }
