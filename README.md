@@ -1,4 +1,7 @@
-# sequel-ninja
+# Sequel Ninja
+A new SQL Client...
+
+Built with Vue Composition API + TypeScript
 
 ## Project setup
 ```
