@@ -3,7 +3,7 @@ const initialState = {
 }
 
 const state = {
-
+  list: [],
 }
 
 const getters = {}

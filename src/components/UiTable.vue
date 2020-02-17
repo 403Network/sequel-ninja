@@ -12,7 +12,7 @@
             </div>
             <div class="cell__grip" @mousedown.stop="gripMouseDown" @dblclick="adjustSingleColumn"></div>
           </th>
-          <th class="cell cell--th-remainder" ref=""></th>
+          <th class="cell cell--th cell--th-remainder" ref=""></th>
         </tr>
       </thead>
       <tbody>
@@ -214,9 +214,9 @@ export default {
     gripMouseMove(e) {
       if (this.grip.thElm && this.grip.startOffset) {
         if (e.pageX > 30 + Math.abs(this.grip.startOffset)) {
+          const remainder = this.$refs.tableThs[this.$refs.tableThs.length - 1]
           this.grip.thElm.style.width = this.grip.startOffset + e.pageX + "px"
-          this.$refs.table.style.width =
-            this.grip.startTableWidth + e.pageX + "px"
+          this.$refs.table.style.width = (this.grip.startTableWidth  - remainder.offsetWidth) + e.pageX + "px"
         }
       }
     },
@@ -267,12 +267,16 @@ export default {
   background-size: 100% 40px;
   overflow: scroll;
   user-select: none;
+  position: relative;
 }
 table {
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   table-layout: fixed;
   min-width: 100%;
   font-size: 0.9rem;
+  position: absolute;
+  top: 0;
 }
 tbody td,
 thead th {
@@ -303,6 +307,9 @@ thead th {
 .cell--th .cell__overflow:active {
   background: #efefef;
 }
+.cell--th .cell__overflow:active {
+  background: #efefef;
+}
 tr {
   outline: none;
 }
@@ -313,14 +320,17 @@ tr {
   color: white;
 }
 .row--th {
-  background: linear-gradient(to bottom, white, whitesmoke);
   box-shadow: 0 0 8px -3px black;
 }
 .cell {
 }
 .cell--th {
+  background: linear-gradient(to bottom, white, whitesmoke);
+  border-bottom: 1px solid #d2d2d2;
   font-weight: normal;
-  position: relative;
+  z-index: 1;
+  position: sticky;
+  top: 0;
 }
 .cell__content {
   display: inline-block;

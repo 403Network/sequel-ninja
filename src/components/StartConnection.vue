@@ -1,12 +1,15 @@
 <template>
   <div>
+    <ul>
+      <li v-for="(fav, index) in state.favourites" :key="index">{{ fav.name }}</li>
+    </ul>
     <form @submit.prevent="submit" class="conn-form">
       <div class="conn-form__block">
         <label for="">Name</label>
         <input
           type="text"
           class="conn-form__input"
-          v-model="connectionForm.name"
+          v-model="state.connectionForm.name"
         />
       </div>
       <div class="conn-form__block">
@@ -14,7 +17,7 @@
         <input
           type="text"
           class="conn-form__input"
-          v-model="connectionForm.host"
+          v-model="state.connectionForm.host"
         />
       </div>
       <div class="conn-form__block">
@@ -22,7 +25,7 @@
         <input
           type="text"
           class="conn-form__input"
-          v-model="connectionForm.user"
+          v-model="state.connectionForm.user"
         />
       </div>
       <div class="conn-form__block">
@@ -30,7 +33,7 @@
         <input
           type="password"
           class="conn-form__input"
-          v-model="connectionForm.password"
+          v-model="state.connectionForm.password"
         />
       </div>
       <div class="conn-form__block">
@@ -38,7 +41,7 @@
         <input
           type="text"
           class="conn-form__input"
-          v-model="connectionForm.database"
+          v-model="state.connectionForm.database"
         />
       </div>
       <div class="conn-form__block">
@@ -53,37 +56,39 @@
   </div>
 </template>
 
+
 <script>
 import { mapActions } from "vuex"
+import * as v from '@vue/composition-api'
+import store from '@/store'
 
-export default {
-  data() {
-    return {
+export default v.createComponent({
+  setup (props, { root }) {
+    const state = v.reactive({
       connectionForm: {
         name: "My First Connection",
         host: "127.0.0.1",
         user: "root",
         password: null,
         database: "privex_frontend"
-      }
+      },
+      uid: v.computed(() => store.state.tabs.selectedTabUid),
+      favourites: v.computed(() => store.state.favourites.list)
+    })
+
+    const submit = async () => {
+      store.dispatch.tabs.createConnection({
+        uid: state.uid,
+        config: state.connectionForm
+      })
+    }
+    
+    return {
+      state,
+      submit,
     }
   },
-  props: ["uid"],
-  methods: {
-    ...mapActions("tabs", ["createConnection"]),
-    async submit() {
-      try {
-        const connection = await this.createConnection({
-          uid: this.$store.state.tabs.selectedTabUid,
-          config: this.connectionForm
-        })
-        this.$emit("connected", connection)
-      } catch (e) {
-        console.log(e)
-      }
-    }
-  }
-}
+})
 </script>
 
 <style>

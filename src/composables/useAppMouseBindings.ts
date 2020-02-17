@@ -38,12 +38,17 @@ export default function useAMouseBindings(tabs: Tab[]) {
     }
   }
 
-  const shiftUp: MouseBinding = {
-    binding: "up",
+const moveTabIndex: MouseBinding = {
+    binding: ["up", "down"],
     handler: (e: any): void => {
-      console.log(document.activeElement)
+      e.preventDefault()
+      const sibling: HTMLElement = (e.key == "ArrowUp" ? document.activeElement.previousSibling : document.activeElement.nextSibling) as HTMLElement
+      if (sibling && sibling.focus) {
+        sibling.dispatchEvent(new Event('mousedown')) 
+        sibling.focus()
+      }
     }
-  }
+}
 
 
 
@@ -52,13 +57,13 @@ export default function useAMouseBindings(tabs: Tab[]) {
     Mousetrap.bind(newTab.binding, newTab.handler)
     Mousetrap.bind(closeTab.binding, closeTab.handler)
     Mousetrap.bind(switchTab.binding, switchTab.handler)
-    Mousetrap.bind(shiftUp.binding, shiftUp.handler)
+    Mousetrap.bind(moveTabIndex.binding, moveTabIndex.handler)
   })
 
   v.onBeforeUnmount(() => {
     Mousetrap.unbind(newTab.binding)
     Mousetrap.unbind(closeTab.binding)
     Mousetrap.unbind(switchTab.binding)
-    Mousetrap.unbind(shiftUp.binding)
+    Mousetrap.unbind(moveTabIndex.binding)
   })
 }

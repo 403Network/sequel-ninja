@@ -2,68 +2,79 @@
   <div>
     <h3>Tables</h3>
     <ul tabindex="1" >
-      <li
-        ref="tableNameItems"
-        :tabindex="index"
-        v-for="(tableName, index) in tableNames"
-        :key="index"
-        :class="selectedTableClasses(tableName)"
-        @mousedown="selectTable({ tab: selectedTab, tableName })"
-        @blur="test"
-      >
+      <li ref="tableNameItems" :tabindex="index" v-for="(tableName, index) in state.tableNames" :key="index" :class="selectedTableClasses(tableName)" @focus="test" @mousedown="selectTable(tableName)">
         {{ tableName }}
       </li>
     </ul>
   </div>
 </template>
 
-<script>
-import { mapGetters, mapActions } from "vuex"
+<script lang="ts">
+import store from '@/store'
+import * as v from '@vue/composition-api'
 
-export default {
-  computed: {
-    ...mapGetters("tabs", ["selectedTab", "selectedTable"]),
-    tableNames() {
-      return this.selectedTab.tableNames
-    }
-  },
-  methods: {
-    ...mapActions("tabs", ["loadTables", "selectTable"]),
-    test (e) {
-      e.preventDefault()
-    },
-    refocusSelected() {
-      const tableRow = this.$refs.tableNameItems.find(item => item.classList.contains('selected'))
-      tableRow.focus()
-    },
-    selectedTableClasses(tableName) {
-      return [this.isSelectedTable(tableName) ? "selected selected--persist" : ""]
-    },
-    isSelectedTable(tableName) {
-      return tableName === this.selectedTable.name
-    }
-  },
-  mounted() {
-    document.body.addEventListener('mousedown', (e) => {
-      e.preventDefault()
-      const target = e.path.find(targ => targ.classList && targ.classList.contains('selected'))
-      const previousFocus = document.querySelector('.selected.selected--persist')
-      if (!target) {
-        if (previousFocus && !previousFocus.classList.contains('selected--old')) {
-          previousFocus.focus()
-        } else {
-          const childSelector = e.target.querySelector('.selected.selected--persist')
-          if (childSelector) childSelector.focus()
-        }
-      } else {
-        target.classList.remove('selected--old')
-        target.focus()
-        if (previousFocus) previousFocus.classList.add('selected--old')
-      }
+export default v.createComponent({
+  setup () {
+    const state: any = v.reactive({
+      selectedTab: v.computed(() => store.getters.tabs.selectedTab),
+      selectedTable: v.computed(() => store.getters.tabs.selectedTable),
+      tableNames: v.computed(() => state.selectedTab.tableNames),
     })
-    this.loadTables(this.selectedTab)
-  }
-}
+    const refs: any = v.reactive({
+      tableNameItems: v.ref(null)
+    })
+
+    const isSelectedTable = (tableName: string): boolean => {
+      return tableName === state.selectedTable.name
+    }
+    
+    const selectedTableClasses = (tableName: string) => {
+      return [isSelectedTable(tableName) ? "selected selected--persist" : ""]
+    }
+
+    const selectTable = (tableName: string) => store.dispatch.tabs.selectTable({ tab: state.selectedTab, tableName })
+
+    const refocusSelected = () => {
+      const tableRow = refs.tableNameItems.tableNameItems.find((item: any) => item.classList.contains('selected'))
+      tableRow.focus()
+    }
+
+    v.onMounted(() => {
+      document.body.addEventListener('mousedown', (e) => {
+        e.preventDefault()
+        const target = e.path.find(targ => targ.classList && targ.classList.contains('selected'))
+        const previousFocus = document.querySelector('.selected.selected--persist')
+        if (!target) {
+          if (previousFocus && !previousFocus.classList.contains('selected--old')) {
+            previousFocus.focus()
+          } else {
+            const childSelector = e.target.querySelector('.selected.selected--persist')
+            if (childSelector) childSelector.focus()
+          }
+        } else {
+          target.classList.remove('selected--old')
+          target.focus()
+          if (previousFocus) previousFocus.classList.add('selected--old')
+        }
+      })
+    })
+
+    v.onMounted(() => store.dispatch.tabs.loadTables(state.selectedTab))
+
+    const test = (e: any) => {
+      console.log(e)
+    }
+
+    return {
+      state,
+      selectTable,
+      selectedTableClasses,
+      isSelectedTable,
+      refs,
+      test,
+    }
+  },
+})
 </script>
 
 <style scoped>
@@ -71,6 +82,7 @@ div {
   min-width: 220px;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 h3 {
   text-align: left;
@@ -85,6 +97,11 @@ ul {
   flex-grow: 1;
   outline: none;
   user-select: none;
+  overflow: scroll;
+  height: 100%;
+  position: absolute;
+  width: 100%;
+  top: 32px;
 }
 li {
   text-align: left;
