@@ -122,7 +122,6 @@ const actions = {
   createConnection({ commit, state }: any, payload: { config: DatabaseConfig, uid: string }) {
     return new Promise((resolve, reject) => {
       const tab: Tab = state.tabs.find((tab: Tab) => tab.uid === payload.uid)
-      console.log(tab)
       tab.connection.connect(payload.config)
       commit("CHANGE_TAB_NAME", {
         name: payload.config.name,
