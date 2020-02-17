@@ -2,7 +2,7 @@
   <div>
     <h3>Tables</h3>
     <ul tabindex="1" >
-      <li ref="tableNameItems" :tabindex="index" v-for="(tableName, index) in state.tableNames" :key="index" :class="selectedTableClasses(tableName)" @focus="test" @mousedown="selectTable(tableName)">
+      <li ref="tableNameItems" :tabindex="index" v-for="(tableName, index) in state.tableNames" :key="index" :class="selectedTableClasses(tableName)" @mousedown="selectTable(tableName)">
         {{ tableName }}
       </li>
     </ul>
@@ -61,17 +61,12 @@ export default v.createComponent({
 
     v.onMounted(() => store.dispatch.tabs.loadTables(state.selectedTab))
 
-    const test = (e: any) => {
-      console.log(e)
-    }
-
     return {
       state,
       selectTable,
       selectedTableClasses,
       isSelectedTable,
       refs,
-      test,
     }
   },
 })
