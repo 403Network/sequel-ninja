@@ -17,9 +17,28 @@ import store from "@/store"
 import { Tab } from "@/store/modules/tabs/contracts.ts"
 import useAppMouseBindings from "@/composables/useAppMouseBindings"
 import useAppTabCoordinator from "@/composables/useAppTabCoordinator"
-import { computed } from "@vue/composition-api"
 import { ReactiveState } from '@/contracts/ComponentStates'
 import { Route } from 'vue-router'
+import { remote } from 'electron'
+
+let rightClickPosition: any = null
+
+const menu = new remote.Menu()
+const menuItem = new remote.MenuItem({
+  label: 'Inspect Element',
+  click: () => {
+    remote.getCurrentWindow().inspectElement(rightClickPosition.x, rightClickPosition.y)
+  }
+})
+menu.append(menuItem)
+
+window.addEventListener('contextmenu', (e) => {
+  e.preventDefault()
+  rightClickPosition = {x: e.x, y: e.y}
+  menu.popup(remote.getCurrentWindow())
+}, false)
+
+
 
 
 export default v.createComponent({
@@ -29,7 +48,7 @@ export default v.createComponent({
   },
   setup(props, { root }: v.SetupContext) {
     const state = v.reactive({
-      tabs: computed(() => store.state.tabs.tabs)
+      tabs: v.computed(() => store.state.tabs.tabs)
     }) as ReactiveState
 
     useAppTabCoordinator(state.tabs, root)

@@ -1,24 +1,27 @@
-import { Database } from "@/services/Database/contracts"
+import { Database, DatabaseRepo, TableRepo } from "@/services/Database/contracts"
 
 export interface Tab {
   connection: Database
   name: string
   uid: string
   disabled: boolean
-  tableNames: string[]
+  tables: ReadonlyArray<TableRepo>
   selectedTable: TableData
 }
 
-export interface TableData {
-  name: string
-  page: 0
+export interface RawTableData {
   fields: any[]
-  rows: any[]
+  results: any[]
+}
+
+export interface TableData extends RawTableData {
+  name: string
+  page: number
 }
 
 export interface TabTableTarget {
   tab: Tab
-  tableName: TableData
+  table: TableRepo
 }
 
 export interface DatabaseConfig {

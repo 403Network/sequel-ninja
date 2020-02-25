@@ -2,8 +2,8 @@
   <div>
     <h3>Tables</h3>
     <ul tabindex="1" >
-      <li ref="tableNameItems" :tabindex="index" v-for="(tableName, index) in state.tableNames" :key="index" :class="selectedTableClasses(tableName)" @mousedown="selectTable(tableName)">
-        {{ tableName }}
+      <li ref="tableNameItems" :tabindex="index" v-for="(table, index) in state.tables" :key="index" :class="selectedTableClasses(table.name)" @mousedown="selectTable(table)">
+        {{ table.name }}
       </li>
     </ul>
   </div>
@@ -12,14 +12,17 @@
 <script lang="ts">
 import store from '@/store'
 import * as v from '@vue/composition-api'
+import { TabTableTarget } from '@/store/modules/tabs/contracts';
+import { TableRepo } from '@/services/Database/contracts';
 
 export default v.createComponent({
   setup () {
     const state: any = v.reactive({
       selectedTab: v.computed(() => store.getters.tabs.selectedTab),
       selectedTable: v.computed(() => store.getters.tabs.selectedTable),
-      tableNames: v.computed(() => state.selectedTab.tableNames),
+      tables: v.computed(() => state.selectedTab.tables),
     })
+    
     const refs: any = v.reactive({
       tableNameItems: v.ref(null)
     })
@@ -32,7 +35,7 @@ export default v.createComponent({
       return [isSelectedTable(tableName) ? "selected selected--persist" : ""]
     }
 
-    const selectTable = (tableName: string) => store.dispatch.tabs.selectTable({ tab: state.selectedTab, tableName })
+    const selectTable = (table: TableRepo) => store.dispatch.tabs.selectTable({ tab: state.selectedTab, table } as TabTableTarget)
 
     const refocusSelected = () => {
       const tableRow = refs.tableNameItems.tableNameItems.find((item: any) => item.classList.contains('selected'))

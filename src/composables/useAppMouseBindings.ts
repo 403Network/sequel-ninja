@@ -8,8 +8,7 @@ interface MouseBinding {
   handler: (e: ExtendedKeyboardEvent) => void
 }
 
-
-export default function useAMouseBindings(tabs: Tab[]) {
+export default function useAppMouseBindings(tabs: Tab[]) {
   const newTab: MouseBinding = {
     binding: "meta+t",
     handler: (e: ExtendedKeyboardEvent): void => {
@@ -38,20 +37,17 @@ export default function useAMouseBindings(tabs: Tab[]) {
     }
   }
 
-const moveTabIndex: MouseBinding = {
-    binding: ["up", "down"],
-    handler: (e: any): void => {
-      e.preventDefault()
-      const sibling: HTMLElement = (e.key == "ArrowUp" ? document.activeElement.previousSibling : document.activeElement.nextSibling) as HTMLElement
-      if (sibling && sibling.focus) {
-        sibling.dispatchEvent(new Event('mousedown')) 
-        sibling.focus()
+  const moveTabIndex: MouseBinding = {
+      binding: ["up", "down"],
+      handler: (e: any): void => {
+        e.preventDefault()
+        const sibling: HTMLElement = (e.key == "ArrowUp" ? document.activeElement.previousSibling : document.activeElement.nextSibling) as HTMLElement
+        if (sibling && sibling.focus) {
+          sibling.dispatchEvent(new Event('mousedown')) 
+          sibling.focus()
+        }
       }
-    }
-}
-
-
-
+  }
 
   v.onMounted(() => {
     Mousetrap.bind(newTab.binding, newTab.handler)

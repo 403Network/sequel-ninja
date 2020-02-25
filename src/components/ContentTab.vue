@@ -1,31 +1,42 @@
 <template>
   <div class="router-view--flex">
-    <db-tables-list></db-tables-list>
+    <db-tables-list />
     <ui-table
-      :rows="selectedTable.rows"
-      :fields="selectedTable.fields"
+      :rows="state.selectedTable.results"
+      :fields="state.selectedTable.fields"
       class="grow"
-      :selected-row="selectedRow"
-    ></ui-table>
+    />
+    <!-- <db-tables-toolbar
+      :page="state.selectedTable.page"
+      :next-page="state.selectedTable.nextPage"
+      :prev-page="state.selectedTable.prevPage"
+    /> -->
   </div>
 </template>
 
 <script>
-import DbTablesList from "./DbTablesList"
-import UiTable from "./UiTable"
-import { mapGetters } from "vuex"
-export default {
+import DbTablesList from './DbTablesList'
+import UiTable from './UiTable'
+import { mapGetters } from 'vuex'
+import * as v from '@vue/composition-api'
+import store from '@/store'
+
+export default v.createComponent({
   components: {
+    // DbTablesToolbar,
     DbTablesList,
     UiTable
   },
-  computed: {
-    ...mapGetters("tabs", ["selectedTable"]),
-    selectedRow() {
-      return 0
+  setup () {
+    const state = v.reactive({
+      selectedTable: store.getters.tabs.selectedTable
+    })
+
+    return {
+      state
     }
-  }
-}
+  },
+})
 </script>
 
 <style>
