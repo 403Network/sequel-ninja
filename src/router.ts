@@ -1,7 +1,7 @@
 import Vue from "vue"
 import VueRouter from "vue-router"
-import ConnectionTab from "@/components/ConnectionTab.vue"
-import ContentTab from "@/components/ContentTab.vue"
+import Tab from "@/components/Tab/Tab.vue"
+import Content from '@/components/Content/Content.vue'
 
 Vue.use(VueRouter)
 
@@ -10,12 +10,12 @@ export default new VueRouter(<any>{
     {
       path: "/",
       name: "index",
-      component: ConnectionTab,
+      component: Tab,
       children: [
         {
           name: "tab-home",
           path: "/:uid",
-          component: ContentTab
+          component: Content
         }
       ]
     }

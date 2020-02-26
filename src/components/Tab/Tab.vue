@@ -4,11 +4,11 @@
 </template>
 
 <script lang="ts">
-import StartConnection from "./StartConnection.vue"
+import StartConnection from "@/components/Tab/StartConnection.vue"
 import store from '@/store'
 import * as v from '@vue/composition-api'
-import { ReactiveState } from '@/contracts/ComponentStates';
-import { Tab } from '@/store/modules/tabs/contracts';
+import { ReactiveState } from '@/contracts/ComponentStates'
+import { Tab } from '@/store/modules/tabs/contracts'
 
 export default v.createComponent({
   components: {

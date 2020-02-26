@@ -1,6 +1,6 @@
 <template>
   <div
-    class="tab-menu__tab-close"
+    class="tab-nav__tab-close"
     :class="closeBtnClasses"
     @click.stop.prevent="close(tab.uid)"
     v-if="!isDisabled"

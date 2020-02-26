@@ -15,8 +15,8 @@
 </template>
 
 <script>
-import DbTablesList from './DbTablesList'
-import UiTable from './UiTable'
+import DbTablesList from '@/components/Db/TablesList'
+import UiTable from '@/components/Generic/UiTable'
 import { mapGetters } from 'vuex'
 import * as v from '@vue/composition-api'
 import store from '@/store'

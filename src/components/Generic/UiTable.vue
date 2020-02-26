@@ -17,8 +17,7 @@
       </thead>
       <tbody>
         <tr v-for="(row, index) in sortedRows" :key="index" :tabindex="index" class="row" :class="rowClasses(index)" @mousedown.exact.stop="selectOnly(index)" @mousedown.shift.exact.stop="selectTo(index)" @mousedown.meta.stop="selectToggle(index)">
-          <td v-for="(item, itemIndex) in Object.keys(row)" :key="itemIndex" class="cell"
-          >
+          <td v-for="(item, itemIndex) in Object.keys(row)" :key="itemIndex" class="cell">
             <div class="cell__overflow">
               <span class="cell__content">{{ row[fields[itemIndex].name] }}</span>
             </div>

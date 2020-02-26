@@ -2,7 +2,7 @@
   <div id="app">
     <header>
       <div>Sequel Ninja</div>
-      <tab-menu />
+      <tab-navigator />
     </header>
     <transition name="fade">
       <router-view class="router-view" />
@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts">
-import TabMenu from "@/components/TabMenu.vue"
+import TabNavigator from "@/components/Tab/TabNavigator/TabNavigator.vue"
 import * as v from "@vue/composition-api"
 import store from "@/store"
 import { Tab } from "@/store/modules/tabs/contracts.ts"
@@ -44,7 +44,7 @@ window.addEventListener('contextmenu', (e) => {
 export default v.createComponent({
   name: "App",
   components: {
-    TabMenu
+    TabNavigator
   },
   setup(props, { root }: v.SetupContext) {
     const state = v.reactive({
