@@ -1,6 +1,6 @@
 <template>
-  <router-view v-if="state.hasConnection"></router-view>
-  <start-connection :uid="state.uid" v-else />
+  <router-view v-if="state.hasConnection" />
+  <start-connection v-else :uid="state.uid" />
 </template>
 
 <script lang="ts">

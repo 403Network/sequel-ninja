@@ -1,31 +1,34 @@
 <template>
-  <div class="ui-table__wrapper" @mousedown="selectReset(null)">
-    <table class="table" ref="table" v-if="fields">
-      <thead>
-        <tr class="row row--th">
-          <th v-for="(field, index) in fields" :key="index" ref="tableThs" class="cell cell--th" @mousedown="setSort(field.name)">
-            <div class="cell__overflow">
-              <span class="cell__content">{{ field.name }}</span>
-            </div>
-            <div class="cell__arrow" :class="sorting.reverse ? 'cell__arrow--reverse' : ''" v-if="isSortedField(field.name)">
-              ^
-            </div>
-            <div class="cell__grip" @mousedown.stop="gripMouseDown" @dblclick="adjustSingleColumn"></div>
-          </th>
-          <th class="cell cell--th cell--th-remainder" ref=""></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(row, index) in sortedRows" :key="index" :tabindex="index" class="row" :class="rowClasses(index)" @mousedown.exact.stop="selectOnly(index)" @mousedown.shift.exact.stop="selectTo(index)" @mousedown.meta.stop="selectToggle(index)">
-          <td v-for="(item, itemIndex) in Object.keys(row)" :key="itemIndex" class="cell">
-            <div class="cell__overflow">
-              <span class="cell__content">{{ row[fields[itemIndex].name] }}</span>
-            </div>
-          </td>
-          <td class="cell cell--td-remainder"></td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="ui-table">
+    <div class="ui-table__wrapper" @mousedown="selectReset(null)">
+      <table v-if="fields" ref="table" class="table">
+        <thead>
+          <tr class="row row--th">
+            <th v-for="(field, index) in fields" :key="index" ref="tableThs" class="cell cell--th" @mousedown="setSort(field.name)">
+              <div class="cell__overflow">
+                <span class="cell__content">{{ field.name }}</span>
+              </div>
+              <div v-if="isSortedField(field.name)" class="cell__arrow" :class="sorting.reverse ? 'cell__arrow--reverse' : ''">
+                ^
+              </div>
+              <div class="cell__grip" @mousedown.stop="gripMouseDown" @dblclick="adjustSingleColumn" />
+            </th>
+            <th ref="" class="cell cell--th cell--th-remainder" />
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(row, index) in sortedRows" :key="index" :tabindex="index" class="row" :class="rowClasses(index)" @mousedown.exact.stop="selectOnly(index)" @mousedown.shift.exact.stop="selectTo(index)" @mousedown.meta.stop="selectToggle(index)">
+            <td v-for="(item, itemIndex) in Object.keys(row)" :key="itemIndex" class="cell">
+              <div class="cell__overflow">
+                <span class="cell__content">{{ row[fields[itemIndex].name] }}</span>
+              </div>
+            </td>
+            <td class="cell cell--td-remainder" />
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <slot />
   </div>
 </template>
 
@@ -65,6 +68,30 @@ export default {
           : right
       })
     }
+  },
+  watch: {
+    fields: {
+      immediate: true,
+      deep: true,
+      handler: function() {
+        if (this.fields.length === 0) {
+          return
+        }
+        this.$nextTick(() => {
+          this.initialColumnAdjust(this.$refs.tableThs)
+        })
+      }
+    }
+  },
+  mounted() {
+    document.addEventListener("mousemove", this.gripMouseMove)
+    document.addEventListener("mouseup", this.gripMouseUp)
+    document.addEventListener("mousedown", this.deselectOnBlur)
+  },
+  beforeDestroy() {
+    document.removeEventListener("mousemove", this.gripMouseMove)
+    document.removeEventListener("mouseup", this.gripMouseUp)
+    document.removeEventListener("mousedown", this.deselectOnBlur)
   },
   methods: {
     isSortedField(fieldName) {
@@ -225,36 +252,17 @@ export default {
     deselectOnBlur() {
       this.selectedRowIndexes = []
     }
-  },
-  mounted() {
-    document.addEventListener("mousemove", this.gripMouseMove)
-    document.addEventListener("mouseup", this.gripMouseUp)
-    document.addEventListener("mousedown", this.deselectOnBlur)
-  },
-  beforeDestroy() {
-    document.removeEventListener("mousemove", this.gripMouseMove)
-    document.removeEventListener("mouseup", this.gripMouseUp)
-    document.removeEventListener("mousedown", this.deselectOnBlur)
-  },
-  watch: {
-    fields: {
-      immediate: true,
-      deep: true,
-      handler: function() {
-        if (this.fields.length === 0) {
-          return
-        }
-        this.$nextTick(() => {
-          this.initialColumnAdjust(this.$refs.tableThs)
-        })
-      }
-    }
   }
 }
 </script>
 
 <style scoped>
+.ui-table {
+  display: flex;
+  flex-direction: column;
+}
 .ui-table__wrapper {
+  flex-grow: 1;
   box-shadow: inset 0px 0 10px -8px black;
   background: linear-gradient(
     to bottom,
@@ -276,6 +284,10 @@ table {
   font-size: 0.9rem;
   position: absolute;
   top: 0;
+}
+tbody {
+  background: linear-gradient( to bottom, white, white 50%, #f7f7f7 50%, #f7f7f7 );
+  background-size: 100% 40px;
 }
 tbody td,
 thead th {

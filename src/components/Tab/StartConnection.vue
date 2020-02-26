@@ -3,54 +3,54 @@
     <ul>
       <li v-for="(fav, index) in state.favourites" :key="index">{{ fav.name }}</li>
     </ul>
-    <form @submit.prevent="submit" class="conn-form">
+    <form class="conn-form" @submit.prevent="submit">
       <div class="conn-form__block">
         <label for="">Name</label>
         <input
+          v-model="state.connectionForm.name"
           type="text"
           class="conn-form__input"
-          v-model="state.connectionForm.name"
-        />
+        >
       </div>
       <div class="conn-form__block">
         <label for="">Host</label>
         <input
+          v-model="state.connectionForm.host"
           type="text"
           class="conn-form__input"
-          v-model="state.connectionForm.host"
-        />
+        >
       </div>
       <div class="conn-form__block">
         <label for="" class="">User</label>
         <input
+          v-model="state.connectionForm.user"
           type="text"
           class="conn-form__input"
-          v-model="state.connectionForm.user"
-        />
+        >
       </div>
       <div class="conn-form__block">
         <label for="">Pass</label>
         <input
+          v-model="state.connectionForm.password"
           type="password"
           class="conn-form__input"
-          v-model="state.connectionForm.password"
-        />
+        >
       </div>
       <div class="conn-form__block">
         <label for="">Database</label>
         <input
+          v-model="state.connectionForm.database"
           type="text"
           class="conn-form__input"
-          v-model="state.connectionForm.database"
-        />
+        >
       </div>
       <div class="conn-form__block">
         <input
           type="submit"
           class="conn-form__btn"
-          @click.prevent="submit"
           value="Start Connection"
-        />
+          @click.prevent="submit"
+        >
       </div>
     </form>
   </div>

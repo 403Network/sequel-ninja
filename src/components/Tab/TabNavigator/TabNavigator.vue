@@ -6,7 +6,7 @@
       </div>
       <close-tab v-if="state.showCloseBtn" :tab="tab">X</close-tab>
     </li>
-    <li class="tab-menu__tab tab-menu__tab--new-tab" key="newTab" @click="createTab">
+    <li key="newTab" class="tab-menu__tab tab-menu__tab--new-tab" @click="createTab">
       +
     </li>
   </transition-group>

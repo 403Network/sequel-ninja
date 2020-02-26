@@ -1,9 +1,9 @@
 <template>
   <div
+    v-if="!isDisabled"
     class="tab-nav__tab-close"
     :class="closeBtnClasses"
     @click.stop.prevent="close(tab.uid)"
-    v-if="!isDisabled"
   >
     X
   </div>

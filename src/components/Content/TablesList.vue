@@ -1,8 +1,8 @@
 <template>
   <div>
     <h3>Tables</h3>
-    <ul tabindex="1" >
-      <li ref="tableNameItems" :tabindex="index" v-for="(table, index) in state.tables" :key="index" :class="selectedTableClasses(table.name)" @mousedown="selectTable(table)">
+    <ul tabindex="1">
+      <li v-for="(table, index) in state.tables" ref="tableNameItems" :key="index" :tabindex="index" :class="selectedTableClasses(table.name)" @mousedown="selectTable(table)">
         {{ table.name }}
       </li>
     </ul>
