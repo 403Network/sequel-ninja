@@ -1,12 +1,12 @@
 <template>
-  <transition-group tag="ul" class="tab-menu" name="fade">
-    <li v-for="tab in state.tabs" :key="tab.uid" :class="tabClasses(tab)" class="tab-menu__tab" :disabled="tab.disabled !== false" @click="changeTab(tab.uid)">
-      <div class="tab-menu__link">
-        <span class="tab-menu__tab-wrap">{{ tab.name }} </span>
+  <transition-group tag="ul" class="tab-nav" name="fade">
+    <li v-for="tab in state.tabs" :key="tab.uid" :class="tabClasses(tab)" class="tab-nav__tab" :disabled="tab.disabled !== false" @click="changeTab(tab.uid)">
+      <div class="tab-nav__link">
+        <span class="tab-nav__tab-wrap">{{ tab.name }} </span>
       </div>
       <close-tab v-if="state.showCloseBtn" :tab="tab">X</close-tab>
     </li>
-    <li key="newTab" class="tab-menu__tab tab-menu__tab--new-tab" @click="createTab">
+    <li key="newTab" class="tab-nav__tab tab-nav__tab--new-tab" @click="createTab">
       +
     </li>
   </transition-group>
@@ -30,7 +30,7 @@ export default {
     })
 
     const tabClasses = (tab) => {
-        return tab.uid === state.selectedTabUid ? "tab-menu__tab--selected" : null
+        return tab.uid === state.selectedTabUid ? "tab-nav__tab--selected" : null
     }
 
     return {
@@ -45,7 +45,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.tab-menu {
+.tab-nav {
   list-style-type: none;
   margin: 0;
   padding: 0;
@@ -55,7 +55,7 @@ export default {
   width: 100%;
   padding-left: 4px;
 }
-.tab-menu__tab {
+.tab-nav__tab {
   flex-grow: 1;
   font-size: 0.9rem;
   flex: 1;
@@ -64,17 +64,17 @@ export default {
   position: relative;
   transition: flex-grow 0.5s ease-out, background 0.5s ease-out;
 }
-.tab-menu__tab:not(:last-child) {
+.tab-nav__tab:not(:last-child) {
   border-radius: 0.25em 0.25em 0 0;
   z-index: 2;
 }
 
-.tab-menu__tab--selected,
-.tab-menu__tab--selected:not(:last-child) {
+.tab-nav__tab--selected,
+.tab-nav__tab--selected:not(:last-child) {
   background: white;
   z-index: 3;
 }
-.tab-menu__tab--new-tab {
+.tab-nav__tab--new-tab {
   max-width: 36px;
   min-width: 36px;
   line-height: 36px;
@@ -83,13 +83,13 @@ export default {
   font-size: 1.5rem;
   transform: scale(0.8);
 }
-.tab-menu__tab--new-tab:hover {
+.tab-nav__tab--new-tab:hover {
   background: #dcdcdc;
 }
-.tab-menu__tab--new-tab:active {
+.tab-nav__tab--new-tab:active {
   background: #c6c6c6;
 }
-.tab-menu__tab-wrap {
+.tab-nav__tab-wrap {
   min-width: 100px;
   text-align: center;
   display: block;
@@ -98,7 +98,7 @@ export default {
   left: 50%;
 }
 
-.tab-menu__link {
+.tab-nav__link {
   padding: 0.4rem 0;
   color: inherit;
   display: block;

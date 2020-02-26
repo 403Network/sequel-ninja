@@ -28,7 +28,7 @@ export default {
     },
     closeBtnClasses() {
       return this.selectedTabUid === this.tab.uid
-        ? "tab-menu__tab-close--selected"
+        ? "tab-nav__tab-close--selected"
         : null
     }
   },
@@ -48,11 +48,11 @@ export default {
 </script>
 
 <style>
-.tab-menu__tab:hover .tab-menu__tab-close {
+.tab-nav__tab:hover .tab-nav__tab-close {
   opacity: 1
   /* background: #efefef */
 }
-.tab-menu__tab-close {
+.tab-nav__tab-close {
   border-radius: 0.25em;
   position: absolute;
   z-index: 4;
@@ -69,15 +69,15 @@ export default {
   opacity: 0;
   transition: opacity 0.2s ease-in, box-shadow 0.2s, background 0.2s;
 }
-.tab-menu__tab-close--selected {
+.tab-nav__tab-close--selected {
   background: white;
 }
 
-.tab-menu__tab-close:hover {
+.tab-nav__tab-close:hover {
   background: #dcdcdc;
 }
 
-.tab-menu__tab-close:active {
+.tab-nav__tab-close:active {
   background: #c6c6c6;
 }
 </style>
