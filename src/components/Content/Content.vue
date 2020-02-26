@@ -1,21 +1,22 @@
 <template>
   <div class="router-view--flex">
-    <db-tables-list />
+    <tables-list />
     <ui-table
       :rows="state.selectedTable.results"
       :fields="state.selectedTable.fields"
       class="grow"
     />
-    <!-- <db-tables-toolbar
+    <toolbar
       :page="state.selectedTable.page"
       :next-page="state.selectedTable.nextPage"
       :prev-page="state.selectedTable.prevPage"
-    /> -->
+    />
   </div>
 </template>
 
 <script>
-import DbTablesList from '@/components/Db/TablesList'
+import TablesList from '@/components/Content/TablesList'
+import Toolbar from '@/components/Content/Toolbar/Toolbar'
 import UiTable from '@/components/Generic/UiTable'
 import { mapGetters } from 'vuex'
 import * as v from '@vue/composition-api'
@@ -23,8 +24,8 @@ import store from '@/store'
 
 export default v.createComponent({
   components: {
-    // DbTablesToolbar,
-    DbTablesList,
+    Toolbar,
+    TablesList,
     UiTable
   },
   setup () {
