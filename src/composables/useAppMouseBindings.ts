@@ -41,7 +41,7 @@ export default function useAppMouseBindings(tabs: Tab[]) {
       binding: ["up", "down"],
       handler: (e: any): void => {
         e.preventDefault()
-        const sibling: HTMLElement = (e.key == "ArrowUp" ? document.activeElement.previousSibling : document.activeElement.nextSibling) as HTMLElement
+        const sibling: HTMLElement = (e.key == "ArrowUp" ? document.activeElement?.previousSibling : document.activeElement?.nextSibling) as HTMLElement
         if (sibling && sibling.focus) {
           sibling.dispatchEvent(new Event('mousedown')) 
           sibling.focus()
