@@ -11,8 +11,8 @@
         :next-page="state.selectedTable.nextPage"
         :prev-page="state.selectedTable.prevPage"
       >
-        <toolbar-btn class="fa-chevron-left" />
-        <toolbar-btn class="fa-chevron-right" />
+        <toolbar-btn class="fa-chevron-left" :disabled="state.hasPrev" @click="prevPage" />
+        <toolbar-btn class="fa-chevron-right" :disabled="state.hasNext" @click="nextPage" />
       </toolbar>
     </ui-table>
   </div>
@@ -32,15 +32,25 @@ export default v.createComponent({
     Toolbar,
     ToolbarBtn,
     TablesList,
-    UiTable
+    UiTable,
   },
   setup () {
     const state = v.reactive({
-      selectedTable: store.getters.tabs.selectedTable
+      selectedTable : v.computed(() => store.getters.tabs.selectedTable),
+      selectedTab   : v.computed(() => store.getters.tabs.selectedTab),
+      table         : v.computed(() => state.selectedTab.tables.find(table => table.name === state.selectedTable.name)),
+      hasPrev       : v.computed(() => state.selectedTab.page > 1),
+      hasNext       : v.computed(() => state.selectedTab.page >= state.selectedTab.totalPages),
     })
+    
+
+    const nextPage = () => store.dispatch.tabs.getTableRows({ table: state.table, tab: state.selectedTab, page: state.selectedTable.page + 1 })
+    const prevPage = () => store.dispatch.tabs.getTableRows({ table: state.table, tab: state.selectedTab, page: state.selectedTable.page - 1 })
 
     return {
-      state
+      state,
+      prevPage,
+      nextPage,
     }
   },
 })

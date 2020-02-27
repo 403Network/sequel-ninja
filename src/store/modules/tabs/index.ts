@@ -1,15 +1,15 @@
-import { MutationExceptions } from "@/store/contracts"
-import UidGenerator from "@/services/UidGenerator"
-import MySql from "@/services/Database/Drivers/MySql"
-import Vue from "vue"
-import { StoreOptions } from "vuex"
-import Router from "@/router"
-import { Tab, TableData, TabTableTarget, DatabaseConfig, RawTableData } from "./contracts"
-import { Database, TableRepo } from "@/services/Database/contracts"
+import { MutationExceptions } from '@/store/contracts'
+import UidGenerator from '@/services/UidGenerator'
+import MySql from '@/services/Database/Drivers/MySql'
+import Vue from 'vue'
+import { StoreOptions } from 'vuex'
+import Router from '@/router'
+import { Tab, TableData, TabTableTarget, DatabaseConfig, RawTableData } from './contracts'
+import { Database, TableRepo } from '@/services/Database/contracts'
 import TableRepoFactory from '@/services/Database/TableRepoFactory'
 
 const mutationExceptions: MutationExceptions = {
-  TAB_NOT_FOUND: "Could not find tab uid."
+  TAB_NOT_FOUND: 'Could not find tab uid.',
 }
 
 interface TabState {
@@ -21,45 +21,48 @@ const createNewTab = (uid: string): Tab => {
   const connection = new MySql.Database
   return {
     connection,
-    name: "Sequel Ninja",
+    name:          'Sequel Ninja',
     uid,
-    disabled: false,
-    tables: [],
+    disabled:      false,
+    tables:        [],
     selectedTable: {
-      name: "",
-      page: 1,
-      fields: [],
-      results: []
-    } as TableData
+      name:       '',
+      page:       1,
+      totalPages: 1,
+      fields:     [],
+      results:    [],
+    } as TableData,
   }
 }
 
 const state: TabState = {
-  tabs: [],
-  selectedTabUid: null
+  tabs:           [],
+  selectedTabUid: null,
 }
 
 const getters = {
-  selectedTab: (state: any) => state.tabs.find((tab: Tab) => tab.uid === state.selectedTabUid),
-  selectedTable: (state: any, getters: any) => getters.selectedTab.selectedTable,
-  selectedTableName: (state: any, getters: any) => getters.selectedTab.tableNames.find((tableName: any) => tableName === getters.selectedTab.selectedTable.name)
+  selectedTab:       (state: any) => state.tabs.find((tab: Tab) => tab.uid === state.selectedTabUid),
+  selectedTable:     (state: any, getters: any) => getters.selectedTab.selectedTable,
+  selectedTableName: (state: any, getters: any) => getters.selectedTab.tableNames.find((tableName: any) => tableName === getters.selectedTab.selectedTable.name),
 }
 
 const actions = {
   async selectTable({ commit, dispatch }: any, { tab, table }: TabTableTarget) {
-    commit("SET_SELECTED_TABLE", { uid: tab.uid, tableName: table.name })
-    dispatch("getTableRows", { tab, table })
+    commit('SET_SELECTED_TABLE', { uid: tab.uid, tableName: table.name })
+    dispatch('getTableRows', { tab, table, page: 1 })
 
     return true
   },
   async getTableRows({ commit }: any, { tab, table, page }: TabTableTarget & { page: number }) {
     const data = await table.list(page)
-    commit("SET_SELECTED_TABLE_DATA", { uid: tab.uid, data, page })
+    const totalRows = await table.count()
+
+    commit('SET_SELECTED_TABLE_DATA', { uid: tab.uid, data, page })
   },
   async loadTables({ commit }: any, tab: Tab) {
-    const data: RawTableData = await tab.connection.query<RawTableData>("SHOW TABLES")
+    const data: RawTableData = await tab.connection.query<RawTableData>('SHOW TABLES')
     const tables = data.results.map(row => TableRepoFactory.get(tab.connection, row[data.fields[0].name]))
-    commit("SET_TABLES", { uid: tab.uid, tables })
+    commit('SET_TABLES', { uid: tab.uid, tables })
     return data
   },
   createTab({ commit, dispatch, state }: any) {
@@ -68,14 +71,14 @@ const actions = {
       do {
         uid = UidGenerator()
       } while (state.tabs.find((tab: Tab) => uid === tab.uid))
-      commit("ADD_TAB", createNewTab(uid))
-      dispatch("changeTab", uid)
+      commit('ADD_TAB', createNewTab(uid))
+      dispatch('changeTab', uid)
       resolve(uid)
     })
   },
   closeSelectedTab({ dispatch, state }: any) {
     return new Promise(resolve => {
-      dispatch("closeTab", state.selectedTabUid)
+      dispatch('closeTab', state.selectedTabUid)
       resolve()
     })
   },
@@ -83,13 +86,13 @@ const actions = {
     return new Promise((resolve, reject) => {
       if (state.selectedTabUid === uid) {
         const currentTabIndex = state.tabs.findIndex(
-          (tab: Tab) => tab.uid === uid
+          (tab: Tab) => tab.uid === uid,
         )
         const newTab = state.tabs[currentTabIndex - 1] || state.tabs[currentTabIndex + 1]
-        dispatch("changeTab", newTab.uid)
+        dispatch('changeTab', newTab.uid)
       }
-      commit("DISABLE_TAB", uid)
-      Vue.nextTick(() => commit("REMOVE_TAB", uid))
+      commit('DISABLE_TAB', uid)
+      Vue.nextTick(() => commit('REMOVE_TAB', uid))
       resolve()
     })
   },
@@ -97,9 +100,9 @@ const actions = {
     return new Promise((resolve, reject) => {
       const tab: Tab = state.tabs.find((tab: Tab) => tab.uid === payload.uid)
       tab.connection.connect(payload.config)
-      commit("CHANGE_TAB_NAME", {
+      commit('CHANGE_TAB_NAME', {
         name: payload.config.name,
-        uid: payload.uid
+        uid:  payload.uid,
       })
       resolve()
     })
@@ -107,12 +110,12 @@ const actions = {
   changeTab({ commit, state }: any, uid: string) {
     return new Promise((resolve, reject) => {
       if (state.selectedTabUid !== uid) {
-        Router.replace({ name: "tab-home", params: { uid: uid } })
-        commit("SET_TAB", uid)
+        Router.replace({ name: 'tab-home', params: { uid: uid }})
+        commit('SET_TAB', uid)
       }
       resolve()
     })
-  }
+  },
 }
 
 const mutations = {
@@ -125,7 +128,6 @@ const mutations = {
     const tab = state.tabs.find((tab: Tab) => tab.uid === uid)
     if (!tab) throw mutationExceptions.TAB_NOT_FOUND
     tab.selectedTable.name = tableName
-    tab.selectedTable.page = 1
   },
   SET_SELECTED_TABLE_DATA(state: TabState, { uid, data, page }: { uid: string, data: any, page: number }) {
     const tab = state.tabs.find(tab => tab.uid === uid)
@@ -160,7 +162,7 @@ const mutations = {
     const tab: Tab | undefined = state.tabs.find(tab => tab.uid === uid)
     if (!tab) throw mutationExceptions.TAB_NOT_FOUND
     tab.connection = connection
-  }
+  },
 }
 
 export default {
@@ -168,5 +170,5 @@ export default {
   state,
   getters,
   actions,
-  mutations
+  mutations,
 } as StoreOptions<TabState>

@@ -12,27 +12,29 @@
 <script lang="ts">
 import store from '@/store'
 import * as v from '@vue/composition-api'
-import { TabTableTarget } from '@/store/modules/tabs/contracts';
-import { TableRepo } from '@/services/Database/contracts';
+import { TabTableTarget } from '@/store/modules/tabs/contracts'
+import { TableRepo } from '@/services/Database/contracts'
 
 export default v.createComponent({
   setup () {
     const state: any = v.reactive({
-      selectedTab: v.computed(() => store.getters.tabs.selectedTab),
+      selectedTab:   v.computed(() => store.getters.tabs.selectedTab),
       selectedTable: v.computed(() => store.getters.tabs.selectedTable),
-      tables: v.computed(() => state.selectedTab.tables),
+      tables:        v.computed(() => state.selectedTab.tables),
     })
-    
+
     const refs: any = v.reactive({
-      tableNameItems: v.ref(null)
+      tableNameItems: v.ref(null),
     })
+
+    const no:any=v.reactive({ thing: '1' })
 
     const isSelectedTable = (tableName: string): boolean => {
       return tableName === state.selectedTable.name
     }
     
     const selectedTableClasses = (tableName: string) => {
-      return [isSelectedTable(tableName) ? "selected selected--persist" : ""]
+      return [isSelectedTable(tableName) ? 'selected selected--persist' : '']
     }
 
     const selectTable = (table: TableRepo) => store.dispatch.tabs.selectTable({ tab: state.selectedTab, table } as TabTableTarget)

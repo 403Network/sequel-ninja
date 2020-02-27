@@ -74,4 +74,5 @@ export abstract class TableRepo {
   abstract destroy(): Promise<boolean>
   abstract show(id: string | number): Promise<RawTableData>
   abstract list(page: number): Promise<RawTableData>
+  abstract count(): Promise<number>
 }

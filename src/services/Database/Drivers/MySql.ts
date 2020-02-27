@@ -1,10 +1,10 @@
-const mysql = require("mysql")
-import { DatabaseDriver, Database, DatabasePromiseless, DatabaseRepo, TableRepo } from "@/services/Database/contracts"
+const mysql = require('mysql')
+import { DatabaseDriver, Database, DatabasePromiseless, DatabaseRepo, TableRepo } from '@/services/Database/contracts'
 import { RawTableData } from '@/store/modules/tabs/contracts'
 
 class MySqlDatabase implements Database {
   private _connection: DatabasePromiseless | null = null
-  private noConnectionException = "No Connection found"
+  private noConnectionException = 'No Connection found'
   private _repo: MySqlDatabaseRepo
 
   public constructor() {
@@ -65,7 +65,7 @@ class MySqlDatabase implements Database {
 class MySqlTableRepo extends TableRepo {
 
   public show(): Promise<RawTableData> {
-    return this.connection.query<RawTableData>("SELECT TABLES")
+    return this.connection.query<RawTableData>('SELECT TABLES')
   }
 
   public async count(): Promise<number> {
@@ -81,11 +81,11 @@ class MySqlTableRepo extends TableRepo {
   }
 
   public update(): Promise<boolean> {
-    return this.connection.query<boolean>(`SELECT TABLES`)
+    return this.connection.query<boolean>('SELECT TABLES')
   }
 
   public destroy(): Promise<boolean> {
-    return this.connection.query<boolean>(`SELECT TABLES`)
+    return this.connection.query<boolean>('SELECT TABLES')
   }
 }
 
@@ -95,13 +95,13 @@ class MySqlDatabaseRepo extends DatabaseRepo {
   public readonly tableRepo: typeof TableRepo = MySqlTableRepo
 
   public showTables(): Promise<RawTableData> {
-    return this.connection.query<RawTableData>(`SELECT TABLES`)
+    return this.connection.query<RawTableData>('SELECT TABLES')
   }
 }
 
 
 export default {
-  Database: MySqlDatabase,
+  Database:     MySqlDatabase,
   DatabaseRepo: MySqlDatabaseRepo,
-  TableRepo: MySqlTableRepo,
+  TableRepo:    MySqlTableRepo,
 } as DatabaseDriver

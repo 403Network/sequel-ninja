@@ -1,15 +1,12 @@
 <template>
   <div class="toolbar">
-    <div>
-      <slot />
-    </div>
-    <div />
+    <slot />
   </div>
 </template>
 
 <script lang="ts">
-import * as v from '@vue/composition-api'
-import store from '@/store'
+import * as v from "@vue/composition-api"
+import store from "@/store"
 
 export default v.createComponent({
   setup (props, context) {
@@ -27,6 +24,8 @@ export default v.createComponent({
   box-shadow: 0px 0px 8px -5px black;
   background: linear-gradient(to bottom, white, #eaeaea, #ffffff);
   z-index: 1;
+  position: relative;
 }
+
 </style>
 
