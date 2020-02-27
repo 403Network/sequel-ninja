@@ -65,11 +65,13 @@ class MySqlDatabase implements Database {
 class MySqlTableRepo extends TableRepo {
 
   public show(): Promise<RawTableData> {
-    return this.connection.query<RawTableData>(`SELECT TABLES`)
+    return this.connection.query<RawTableData>("SELECT TABLES")
   }
 
-  public count(): Promise<RawTableData> {
-    return this.connection.query(`SELECT COUNT(*) FROM ${this._tableName}`)
+  public async count(): Promise<number> {
+    const query = await this.connection.query<RawTableData>(`SELECT COUNT(*) FROM ${this._tableName}`)
+
+    return query.results[0][query.fields[0].name]
   }
 
   public list(page: number = 1): Promise<RawTableData> {
