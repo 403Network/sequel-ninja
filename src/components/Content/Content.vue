@@ -11,8 +11,8 @@
         :next-page="state.selectedTable.nextPage"
         :prev-page="state.selectedTable.prevPage"
       >
-        <toolbar-btn class="fa-chevron-left" :disabled="state.hasPrev" @click="prevPage" />
-        <toolbar-btn class="fa-chevron-right" :disabled="state.hasNext" @click="nextPage" />
+        <toolbar-btn class="fa-chevron-left" :disabled="!state.hasPrev" @click="prevPage" />
+        <toolbar-btn class="fa-chevron-right" :disabled="!state.hasNext" @click="nextPage" />
       </toolbar>
     </ui-table>
   </div>
@@ -27,7 +27,7 @@ import { mapGetters } from 'vuex'
 import * as v from '@vue/composition-api'
 import store from '@/store'
 
-export default v.createComponent({
+export default v.defineComponent({
   components: {
     Toolbar,
     ToolbarBtn,
@@ -36,14 +36,14 @@ export default v.createComponent({
   },
   setup () {
     const state = v.reactive({
-      selectedTable : v.computed(() => store.getters.tabs.selectedTable),
-      selectedTab   : v.computed(() => store.getters.tabs.selectedTab),
-      table         : v.computed(() => state.selectedTab.tables.find(table => table.name === state.selectedTable.name)),
-      hasPrev       : v.computed(() => state.selectedTab.page > 1),
-      hasNext       : v.computed(() => state.selectedTab.page >= state.selectedTab.totalPages),
+      selectedTable: v.computed(() => store.getters.tabs.selectedTable),
+      selectedTab:   v.computed(() => store.getters.tabs.selectedTab),
+      table:         v.computed(() => state.selectedTab.tables.find(table => table.name === state.selectedTable.name)),
+      hasPrev:       v.computed(() => state.selectedTable.page > 1),
+      hasNext:       v.computed(() => state.selectedTable.page < state.selectedTable.totalPages),
     })
-    
 
+    
     const nextPage = () => store.dispatch.tabs.getTableRows({ table: state.table, tab: state.selectedTab, page: state.selectedTable.page + 1 })
     const prevPage = () => store.dispatch.tabs.getTableRows({ table: state.table, tab: state.selectedTab, page: state.selectedTable.page - 1 })
 

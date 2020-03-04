@@ -58,28 +58,28 @@
 
 
 <script>
-import { mapActions } from "vuex"
+import { mapActions } from 'vuex'
 import * as v from '@vue/composition-api'
 import store from '@/store'
 
-export default v.createComponent({
+export default v.defineComponent({
   setup (props, { root }) {
     const state = v.reactive({
       connectionForm: {
-        name: "My First Connection",
-        host: "127.0.0.1",
-        user: "root",
+        name:     'My First Connection',
+        host:     '127.0.0.1',
+        user:     'root',
         password: null,
-        database: "privex_frontend"
+        database: 'privex_frontend',
       },
-      uid: v.computed(() => store.state.tabs.selectedTabUid),
-      favourites: v.computed(() => store.state.favourites.list)
+      uid:        v.computed(() => store.state.tabs.selectedTabUid),
+      favourites: v.computed(() => store.state.favourites.list),
     })
 
-    const submit = async () => {
+    const submit = () => {
       store.dispatch.tabs.createConnection({
-        uid: state.uid,
-        config: state.connectionForm
+        uid:    state.uid,
+        config: state.connectionForm,
       })
     }
     

@@ -1,6 +1,6 @@
-import Vue from "vue"
-import VueRouter from "vue-router"
-import Tab from "@/components/Tab/Tab.vue"
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+import Tab from '@/components/Tab/Tab.vue'
 import Content from '@/components/Content/Content.vue'
 
 Vue.use(VueRouter)
@@ -8,16 +8,16 @@ Vue.use(VueRouter)
 export default new VueRouter(<any>{
   routes: [
     {
-      path: "/",
-      name: "index",
+      path:      '/',
+      name:      'index',
       component: Tab,
-      children: [
+      children:  [
         {
-          name: "tab-home",
-          path: "/:uid",
-          component: Content
-        }
-      ]
-    }
-  ]
+          name:      'tab-home',
+          path:      '/:uid',
+          component: Content,
+        },
+      ],
+    },
+  ],
 })

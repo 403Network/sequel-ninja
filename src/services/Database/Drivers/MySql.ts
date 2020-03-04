@@ -1,5 +1,5 @@
 const mysql = require('mysql')
-import { DatabaseDriver, Database, DatabasePromiseless, DatabaseRepo, TableRepo } from '@/services/Database/contracts'
+import { DatabaseDriver, Database, DatabasePromiseless, DatabaseRepo, TableRepo, StaticTableRepoThis } from '@/services/Database/contracts'
 import { RawTableData } from '@/store/modules/tabs/contracts'
 
 class MySqlDatabase implements Database {
@@ -62,10 +62,12 @@ class MySqlDatabase implements Database {
 }
 
 
-class MySqlTableRepo extends TableRepo {
+export class MySqlTableRepo extends TableRepo {
 
-  public show(): Promise<RawTableData> {
-    return this.connection.query<RawTableData>('SELECT TABLES')
+  protected static instance: MySqlTableRepo
+
+  public byId(id: number): Promise<RawTableData> {
+    return this.connection.query<RawTableData>(`SELECT * FROM ${this._tableName} WHERE id=${id}`)
   }
 
   public async count(): Promise<number> {
@@ -76,17 +78,28 @@ class MySqlTableRepo extends TableRepo {
 
   public list(page: number = 1): Promise<RawTableData> {
     const min = (page * TableRepo.pageLength) - TableRepo.pageLength
-    const max = (page * TableRepo.pageLength)
-    return this.connection.query<RawTableData>(`SELECT * FROM ${this._tableName} LIMIT ${min}, ${max}`)
+    const max = page * TableRepo.pageLength
+    const offset = TableRepo.pageLength * page - TableRepo.pageLength
+    return this.connection.query<RawTableData>(`SELECT * FROM ${this._tableName} LIMIT ${TableRepo.pageLength} OFFSET ${offset}`)
   }
 
-  public update(): Promise<boolean> {
-    return this.connection.query<boolean>('SELECT TABLES')
+  public async update(): Promise<boolean> {
+    const result = await this.connection.query<RawTableData>('')
+    if (result) {
+      return true
+    }
+    return false
   }
 
-  public destroy(): Promise<boolean> {
-    return this.connection.query<boolean>('SELECT TABLES')
+  public async destroy($ids: number[] | number): Promise<boolean> {
+    const result = await this.connection.query<RawTableData>('')
+    if (result) {
+      return true
+    }
+    return false
   }
+  
+
 }
 
 
@@ -95,13 +108,18 @@ class MySqlDatabaseRepo extends DatabaseRepo {
   public readonly tableRepo: typeof TableRepo = MySqlTableRepo
 
   public showTables(): Promise<RawTableData> {
-    return this.connection.query<RawTableData>('SELECT TABLES')
+    return this.connection.query<RawTableData>('SHOW TABLES')
   }
 }
 
+export interface MySqlDatabaseDriver extends DatabaseDriver {
+  Database: typeof MySqlDatabase
+  DatabaseRepo: DatabaseRepo
+  TableRepo: typeof MySqlTableRepo
+}
 
 export default {
   Database:     MySqlDatabase,
   DatabaseRepo: MySqlDatabaseRepo,
   TableRepo:    MySqlTableRepo,
-} as DatabaseDriver
+} as unknown as MySqlDatabaseDriver

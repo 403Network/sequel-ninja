@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import CloseTab from "./CloseTab"
+import CloseTab from './CloseTab'
 import store from '@/store'
 import * as v from '@vue/composition-api'
 
@@ -23,14 +23,14 @@ export default {
   },
   setup () {
     const state = v.reactive({
-      disabled: false,
-      tabs: v.computed(() => store.state.tabs.tabs),
+      disabled:       false,
+      tabs:           v.computed(() => store.state.tabs.tabs),
       selectedTabUid: v.computed(() => store.state.tabs.selectedTabUid),
-      showCloseBtn: v.computed(() => store.state.tabs.tabs.length > 1),
+      showCloseBtn:   v.computed(() => store.state.tabs.tabs.length > 1),
     })
 
     const tabClasses = (tab) => {
-        return tab.uid === state.selectedTabUid ? "tab-nav__tab--selected" : null
+        return tab.uid === state.selectedTabUid ? 'tab-nav__tab--selected' : null
     }
 
     return {
@@ -40,7 +40,7 @@ export default {
       changeTab: store.dispatch.tabs.changeTab,
       createTab: store.dispatch.tabs.createTab,
     }
-  }
+  },
 }
 </script>
 

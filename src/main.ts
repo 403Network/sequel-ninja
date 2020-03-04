@@ -10,6 +10,6 @@ Vue.use(VueCompositionApi)
 
 new Vue({
   render: h => h(App),
-  store: store.original,
-  router
-}).$mount("#app")
+  store:  store.original,
+  router,
+}).$mount('#app')

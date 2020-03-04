@@ -1,4 +1,4 @@
-import MySql from './Drivers/MySql'
+import MySql, { MySqlTableRepo } from './Drivers/MySql'
 import { TableRepo, Database } from './contracts'
 
 export default class TableRepoFactory {
@@ -7,7 +7,7 @@ export default class TableRepoFactory {
       case typeof MySql:
         return new MySql.TableRepo(database, tableName)
       default:
-        throw "Could not create Table Repository"
+        throw 'Could not create Table Repository'
     }
   }
 } 

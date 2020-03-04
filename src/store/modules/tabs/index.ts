@@ -18,11 +18,10 @@ interface TabState {
 }
 
 const createNewTab = (uid: string): Tab => {
-  const connection = new MySql.Database
   return {
-    connection,
-    name:          'Sequel Ninja',
+    connection:    new MySql.Database,
     uid,
+    name:          'Sequel Ninja',
     disabled:      false,
     tables:        [],
     selectedTable: {
@@ -47,20 +46,19 @@ const getters = {
 }
 
 const actions = {
-  async selectTable({ commit, dispatch }: any, { tab, table }: TabTableTarget) {
+  selectTable({ commit, dispatch }: any, { tab, table }: TabTableTarget) {
     commit('SET_SELECTED_TABLE', { uid: tab.uid, tableName: table.name })
     dispatch('getTableRows', { tab, table, page: 1 })
-
-    return true
   },
   async getTableRows({ commit }: any, { tab, table, page }: TabTableTarget & { page: number }) {
     const data = await table.list(page)
     const totalRows = await table.count()
+    const totalPages = Math.round(totalRows / TableRepo.pageLength)
 
-    commit('SET_SELECTED_TABLE_DATA', { uid: tab.uid, data, page })
+    commit('SET_SELECTED_TABLE_DATA', { uid: tab.uid, data, page, totalPages })
   },
   async loadTables({ commit }: any, tab: Tab) {
-    const data: RawTableData = await tab.connection.query<RawTableData>('SHOW TABLES')
+    const data: RawTableData = await tab.connection.repo.showTables()
     const tables = data.results.map(row => TableRepoFactory.get(tab.connection, row[data.fields[0].name]))
     commit('SET_TABLES', { uid: tab.uid, tables })
     return data
@@ -85,9 +83,7 @@ const actions = {
   closeTab({ commit, dispatch, state }: any, uid: string) {
     return new Promise((resolve, reject) => {
       if (state.selectedTabUid === uid) {
-        const currentTabIndex = state.tabs.findIndex(
-          (tab: Tab) => tab.uid === uid,
-        )
+        const currentTabIndex = state.tabs.findIndex((tab: Tab) => tab.uid === uid)
         const newTab = state.tabs[currentTabIndex - 1] || state.tabs[currentTabIndex + 1]
         dispatch('changeTab', newTab.uid)
       }
@@ -129,12 +125,13 @@ const mutations = {
     if (!tab) throw mutationExceptions.TAB_NOT_FOUND
     tab.selectedTable.name = tableName
   },
-  SET_SELECTED_TABLE_DATA(state: TabState, { uid, data, page }: { uid: string, data: any, page: number }) {
+  SET_SELECTED_TABLE_DATA(state: TabState, { uid, data, page, totalPages }: { uid: string, data: any, page: number, totalPages: number }) {
     const tab = state.tabs.find(tab => tab.uid === uid)
     if (!tab) throw mutationExceptions.TAB_NOT_FOUND
     tab.selectedTable.results = [...data.results]
     tab.selectedTable.fields = [...data.fields]
     tab.selectedTable.page = page
+    tab.selectedTable.totalPages = totalPages
   },
   SET_TABLES(state: TabState, { uid, tables }: { uid: string, tables: TableRepo[] }) {
     const tab = state.tabs.find((tab: Tab) => tab.uid === uid)

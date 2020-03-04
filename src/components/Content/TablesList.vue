@@ -15,7 +15,7 @@ import * as v from '@vue/composition-api'
 import { TabTableTarget } from '@/store/modules/tabs/contracts'
 import { TableRepo } from '@/services/Database/contracts'
 
-export default v.createComponent({
+export default v.defineComponent({
   setup () {
     const state: any = v.reactive({
       selectedTab:   v.computed(() => store.getters.tabs.selectedTab),

@@ -5,13 +5,13 @@
 </template>
 
 <script lang="ts">
-import * as v from "@vue/composition-api"
-import store from "@/store"
+import * as v from '@vue/composition-api'
+import store from '@/store'
 
-export default v.createComponent({
+export default v.defineComponent({
   setup (props, context) {
     
-  }
+  },
 })
 </script>
 

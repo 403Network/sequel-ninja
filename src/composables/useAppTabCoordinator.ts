@@ -1,8 +1,8 @@
 
-import * as v from "@vue/composition-api"
-import store from "@/store"
-import { Tab } from "@/store/modules/tabs/contracts.ts"
-import { ComponentInstance } from '@vue/composition-api/dist/component';
+import * as v from '@vue/composition-api'
+import store from '@/store'
+import { Tab } from '@/store/modules/tabs/contracts.ts'
+import { ComponentInstance } from '@vue/composition-api/dist/component'
 
 export default function useAppTabCoordinator(tabs: Tab[], root: ComponentInstance) {
   v.watch(() => {

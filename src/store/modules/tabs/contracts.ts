@@ -17,6 +17,7 @@ export interface RawTableData {
 export interface TableData extends RawTableData {
   name: string
   page: number
+  totalPages: number
 }
 
 export interface TabTableTarget {

@@ -1,6 +1,6 @@
-import Vue from "vue"
-import { createDirectStore } from "direct-vuex"
-import tabs from "@/store/modules/tabs"
+import Vue from 'vue'
+import { createDirectStore } from 'direct-vuex'
+import tabs from '@/store/modules/tabs'
 import favourites from '@/store/modules/favourites'
 import VuexPersistence from 'vuex-persist'
 
@@ -13,9 +13,9 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore(
   (vuex: any) => Vue.use(vuex), {
   modules: {
     tabs,
-    favourites
+    favourites,
   },
-  plugins: [vuexLocal.plugin]
+  plugins: [vuexLocal.plugin],
 } as any)
 
 export default store
@@ -23,7 +23,7 @@ export default store
 export { rootActionContext, moduleActionContext }
 
 export type AppStore = typeof store
-declare module "vuex" {
+declare module 'vuex' {
   interface Store<S> {
     direct: AppStore;
   }

@@ -1,10 +1,3 @@
-// {
-  // "plugins": ["@typescript-eslint"],
-//   "rules": {
-//     "@typescript-eslint/rule-name": "error"
-//   },
-// }
-
 module.exports = {
   parserOptions: {
     parser: "@typescript-eslint/parser",

@@ -33,26 +33,26 @@
 </template>
 
 <script>
-import Vue from "vue"
-import _ from "lodash"
+import Vue from 'vue'
+import _ from 'lodash'
 
 const initialGrip = {
-  thElm: null,
-  startOffset: null,
-  startTableWidth: null
+  thElm:           null,
+  startOffset:     null,
+  startTableWidth: null,
 }
 
 export default {
-  props: ["fields", "rows"],
+  props: ['fields', 'rows'],
   data() {
     return {
       selectedRowIndexes: [],
       mostRecentRowIndex: null,
-      sorting: {
+      sorting:            {
         fieldName: null,
-        reverse: false
+        reverse:   false,
       },
-      grip: { ...initialGrip }
+      grip: { ...initialGrip },
     }
   },
   computed: {
@@ -67,31 +67,31 @@ export default {
           ? left
           : right
       })
-    }
+    },
   },
   watch: {
     fields: {
       immediate: true,
-      deep: true,
-      handler: function() {
+      deep:      true,
+      handler:   function() {
         if (this.fields.length === 0) {
           return
         }
         this.$nextTick(() => {
           this.initialColumnAdjust(this.$refs.tableThs)
         })
-      }
-    }
+      },
+    },
   },
   mounted() {
-    document.addEventListener("mousemove", this.gripMouseMove)
-    document.addEventListener("mouseup", this.gripMouseUp)
-    document.addEventListener("mousedown", this.deselectOnBlur)
+    document.addEventListener('mousemove', this.gripMouseMove)
+    document.addEventListener('mouseup', this.gripMouseUp)
+    document.addEventListener('mousedown', this.deselectOnBlur)
   },
   beforeDestroy() {
-    document.removeEventListener("mousemove", this.gripMouseMove)
-    document.removeEventListener("mouseup", this.gripMouseUp)
-    document.removeEventListener("mousedown", this.deselectOnBlur)
+    document.removeEventListener('mousemove', this.gripMouseMove)
+    document.removeEventListener('mouseup', this.gripMouseUp)
+    document.removeEventListener('mousedown', this.deselectOnBlur)
   },
   methods: {
     isSortedField(fieldName) {
@@ -129,7 +129,7 @@ export default {
       let loopForward = this.mostRecentRowIndex + 1
       while (loopForward < this.sortedRows.length) {
         const loopForwardSelected = this.selectedRowIndexes.findIndex(
-          index => index === loopForward
+          index => index === loopForward,
         )
         // If the row clicked is higher than the most recently clicked row
         if (rowIndex > this.mostRecentRowIndex) {
@@ -156,7 +156,7 @@ export default {
       let loopBackward = this.mostRecentRowIndex - 1
       while (loopBackward > -1) {
         const loopBackwardSelected = this.selectedRowIndexes.findIndex(
-          index => index === loopBackward
+          index => index === loopBackward,
         )
         if (rowIndex < this.mostRecentRowIndex) {
           if (loopBackwardSelected === -1) {
@@ -179,7 +179,7 @@ export default {
     },
     selectToggle(rowIndex) {
       const findRow = this.selectedRowIndexes.findIndex(
-        selectedRowIndex => selectedRowIndex === rowIndex
+        selectedRowIndex => selectedRowIndex === rowIndex,
       )
       if (findRow > -1) {
         this.selectedRowIndexes.splice(findRow, 1)
@@ -205,14 +205,14 @@ export default {
     rowClasses(rowIndex) {
       return [
         this.selectedRowIndexes.findIndex(
-          selectedRowIndex => selectedRowIndex === rowIndex
+          selectedRowIndex => selectedRowIndex === rowIndex,
         ) > -1
-          ? "row--selected selected"
-          : null
+          ? 'row--selected selected'
+          : null,
       ]
     },
     adjustSingleColumn(e) {
-      const thElm = e.target.closest(".cell")
+      const thElm = e.target.closest('.cell')
       this.initialColumnAdjust([thElm])
     },
     initialColumnAdjust(columns) {
@@ -221,18 +221,18 @@ export default {
       }
       let totalThWidth = 0
       columns.forEach(th => {
-        if (th.classList.contains("cell--th-remainder")) {
-          th.style.width = "auto"
+        if (th.classList.contains('cell--th-remainder')) {
+          th.style.width = 'auto'
           return
         }
-        const thWidth = th.querySelector("div > span").offsetWidth
+        const thWidth = th.querySelector('div > span').offsetWidth
         totalThWidth += thWidth
-        th.style.width = thWidth + 15 + "px"
+        th.style.width = thWidth + 15 + 'px'
       })
-      this.$refs.table.style.width = totalThWidth + "px"
+      this.$refs.table.style.width = totalThWidth + 'px'
     },
     gripMouseDown(e) {
-      const thElm = e.target.closest(".cell")
+      const thElm = e.target.closest('.cell')
       this.grip.thElm = thElm
       this.grip.startOffset = thElm.offsetWidth - e.pageX
       this.grip.startTableWidth = this.$refs.table.offsetWidth - e.pageX
@@ -241,8 +241,8 @@ export default {
       if (this.grip.thElm && this.grip.startOffset) {
         if (e.pageX > 30 + Math.abs(this.grip.startOffset)) {
           const remainder = this.$refs.tableThs[this.$refs.tableThs.length - 1]
-          this.grip.thElm.style.width = this.grip.startOffset + e.pageX + "px"
-          this.$refs.table.style.width = (this.grip.startTableWidth  - remainder.offsetWidth) + e.pageX + "px"
+          this.grip.thElm.style.width = this.grip.startOffset + e.pageX + 'px'
+          this.$refs.table.style.width = (this.grip.startTableWidth  - remainder.offsetWidth) + e.pageX + 'px'
         }
       }
     },
@@ -251,8 +251,8 @@ export default {
     },
     deselectOnBlur() {
       this.selectedRowIndexes = []
-    }
-  }
+    },
+  },
 }
 </script>
 
