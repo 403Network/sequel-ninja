@@ -11,8 +11,18 @@
         :next-page="state.selectedTable.nextPage"
         :prev-page="state.selectedTable.prevPage"
       >
-        <toolbar-btn class="fa-chevron-left" :disabled="!state.hasPrev" @click="prevPage" />
-        <toolbar-btn class="fa-chevron-right" :disabled="!state.hasNext" @click="nextPage" />
+        <toolbar-btn 
+          :disabled="!state.hasPrev"
+          @click="prevPage"
+        >
+          Prev
+        </toolbar-btn>
+        <toolbar-btn
+          :disabled="!state.hasNext"
+          @click="nextPage"
+        >
+          Next
+        </toolbar-btn>
       </toolbar>
     </ui-table>
   </div>
@@ -43,7 +53,7 @@ export default v.defineComponent({
       hasNext:       v.computed(() => state.selectedTable.page < state.selectedTable.totalPages),
     })
 
-    
+
     const nextPage = () => store.dispatch.tabs.getTableRows({ table: state.table, tab: state.selectedTab, page: state.selectedTable.page + 1 })
     const prevPage = () => store.dispatch.tabs.getTableRows({ table: state.table, tab: state.selectedTab, page: state.selectedTable.page - 1 })
 

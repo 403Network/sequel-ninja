@@ -26,7 +26,8 @@ export default {
       disabled:       false,
       tabs:           v.computed(() => store.state.tabs.tabs),
       selectedTabUid: v.computed(() => store.state.tabs.selectedTabUid),
-      showCloseBtn:   v.computed(() => store.state.tabs.tabs.length > 1),
+      
+      showCloseBtn: v.computed(() => store.state.tabs.tabs.length > 1),
     })
 
     const tabClasses = (tab) => {

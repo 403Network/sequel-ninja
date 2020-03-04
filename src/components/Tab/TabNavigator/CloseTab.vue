@@ -13,14 +13,20 @@
 import { mapActions } from 'vuex'
 import * as v from '@vue/composition-api'
 import store from '@/store'
-import { Tab } from '@/store/modules/tabs/contracts';
+import { Tab } from '@/store/modules/tabs/contracts'
+
+interface Props {
+  tab: Tab,
+}
 
 export default v.defineComponent({
-  setup (props: { tab: Tab }, ctx: v.SetupContext) {
+  props: ['tab'],
+  setup (props: Props, ctx: v.SetupContext) {
+    console.log(props)
     const state: any = v.reactive({
-      isDisabled: false,
-      tabs: v.computed(() => store.state.tabs.tabs),
-      selectedTabUid: v.computed(() => store.state.tabs.selectedTabUid),
+      isDisabled:      false,
+      tabs:            v.computed(() => store.state.tabs.tabs),
+      selectedTabUid:  v.computed(() => store.state.tabs.selectedTabUid),
       closeBtnClasses: v.computed(() => state.selectedTabUid === props.tab.uid ? 'tab-nav__tab-close--selected' : null),
     })
 
@@ -30,36 +36,14 @@ export default v.defineComponent({
       if (state.isDisabled) return
       state.isDisabled = true
       ctx.root.$nextTick(() => closeTab(uid))
-    },
+    }
 
     return {
       state,
-      close
+      close,
     }
   },
-  props: ['tab'],
-  data() {
-    return {
-      isDisabled: false,
-    }
-  },
-  computed: {
-    tabs() {
-      return this.$store.state.tabs.tabs
-    },
-    selectedTabUid() {
-      return this.$store.state.tabs.selectedTabUid
-    },
-    closeBtnClasses() {
-      return this.selectedTabUid === this.tab.uid
-        ? 'tab-nav__tab-close--selected'
-        : null
-    },
-  },
-  methods: {
-    ...mapActions('tabs', ['closeTab']),
-  },
-}
+})
 </script>
 
 <style>
