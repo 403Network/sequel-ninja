@@ -105,6 +105,8 @@ const actions = {
   },
   changeTab({ commit, state }: any, uid: string) {
     return new Promise((resolve, reject) => {
+      const tab: Tab = state.tabs.find((tab: Tab) => tab.uid === uid)
+      if (tab?.disabled) return
       if (state.selectedTabUid !== uid) {
         Router.replace({ name: 'tab-home', params: { uid: uid }})
         commit('SET_TAB', uid)
