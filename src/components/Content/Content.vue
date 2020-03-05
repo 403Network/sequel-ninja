@@ -1,28 +1,16 @@
 <template>
   <div class="router-view--flex">
     <tables-list />
-    <ui-table
-      :rows="state.selectedTable.results"
-      :fields="state.selectedTable.fields"
-      class="grow"
-    >
-      <toolbar
-        :page="state.selectedTable.page"
-        :next-page="state.selectedTable.nextPage"
-        :prev-page="state.selectedTable.prevPage"
-      >
-        <toolbar-btn 
-          :disabled="!state.hasPrev"
-          @click="prevPage"
-        >
-          Prev
-        </toolbar-btn>
-        <toolbar-btn
-          :disabled="!state.hasNext"
-          @click="nextPage"
-        >
-          Next
-        </toolbar-btn>
+    <ui-table :rows="state.selectedTable.results" :fields="state.selectedTable.fields" class="grow">
+      <toolbar :page="state.selectedTable.page" :next-page="state.selectedTable.nextPage" :prev-page="state.selectedTable.prevPage">
+        <template slot="right">
+          <toolbar-btn :disabled="!state.hasPrev" @click="prevPage">
+            <font-awesome-icon icon="caret-left" />
+          </toolbar-btn>
+          <toolbar-btn :disabled="!state.hasNext" @click="nextPage">
+            <font-awesome-icon icon="caret-right" />
+          </toolbar-btn>
+        </template>
       </toolbar>
     </ui-table>
   </div>
