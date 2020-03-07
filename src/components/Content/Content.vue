@@ -1,17 +1,17 @@
 <template>
   <div class="router-view--flex">
-    <tables-list />
-    <ui-table :rows="state.selectedTable.results" :fields="state.selectedTable.fields" class="grow" @selected="rowsSelected">
+    <tables-list tabindex="1" />
+    <ui-table :rows="state.selectedTable.results" :fields="state.selectedTable.fields" class="grow" tabindex="2" @selected="rowsSelected">
       <toolbar :page="state.selectedTable.page" :next-page="state.selectedTable.nextPage" :prev-page="state.selectedTable.prevPage">
         <template slot="left">
-          <toolbar-btn :disabled="true" class="toolbar-btn--shadowed toolbar-btn--wide">
+          <toolbar-btn :disabled="true" shadowed wide>
             <font-awesome-icon icon="plus" size="sm" />
             <font-awesome-icon icon="plus" size="sm" />
           </toolbar-btn>
-          <toolbar-btn :disabled="!state.hasDeletable" class="toolbar-btn--wide" @click.stop.prevent>
+          <toolbar-btn :disabled="!state.hasDeletable" wide @click.stop.prevent>
             <font-awesome-icon icon="minus" size="sm" />
           </toolbar-btn>
-          <toolbar-btn :disabled="true" class="toolbar-btn--wide">
+          <toolbar-btn :disabled="true" wide>
             <font-awesome-icon icon="sync" size="sm" />
           </toolbar-btn>
         </template>

@@ -1,5 +1,5 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faCaretLeft, faCaretRight, faPlus, faMinus, faSync, faTable, faCodeBranch, faSitemap, faBolt, faInfoCircle, faTerminal } from '@fortawesome/free-solid-svg-icons'
+import { faCaretLeft, faCaretRight, faPlus, faMinus, faSync, faTable, faCodeBranch, faSitemap, faBolt, faInfoCircle, faTerminal, faServer, faToriiGate, faIgloo } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 library.add(faCaretRight)
@@ -9,6 +9,7 @@ library.add(faMinus)
 library.add(faSync)
 library.add(faTable)
 library.add(faCodeBranch)
+library.add(faIgloo)
 library.add(faSitemap)
 library.add(faBolt)
 library.add(faInfoCircle)

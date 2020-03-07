@@ -11,6 +11,6 @@ import store from '@/store'
 export default v.defineComponent({
   setup(props, context: v.SetupContext) {
 
-  }
+  },
 })
 </script>

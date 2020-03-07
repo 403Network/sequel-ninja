@@ -1,8 +1,40 @@
 <template>
-  <button class="toolbar-btn" v-bind="$attrs" v-on="$listeners">
+  <button class="toolbar-btn" :class="state.classes" v-bind="$attrs" v-on="$listeners">
     <slot />
   </button>
 </template>
+
+<script lang="ts">
+import * as v from '@vue/composition-api'
+import store from '@/store'
+
+export interface ToolbarBtnProps {
+  [prop: string]: any
+}
+
+export default v.defineComponent({
+  props: {
+    shadowed: {
+      type:    Boolean,
+      default: false,
+    },
+    wide: {
+      type:    Boolean,
+      default: false,
+    },
+  },
+  setup (props: ToolbarBtnProps, context: v.SetupContext) {
+    const state = v.reactive({
+      classes: v.computed(() => Object.keys(props).map((key: any) => props[key] ? `toolbar-btn--${key}` : null)),
+    })
+    console.log(props)
+    return {
+      state,
+    }
+  },
+})
+</script>
+
 
 <style lang="scss" scoped>
 .toolbar-btn {

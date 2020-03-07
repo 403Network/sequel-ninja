@@ -5,6 +5,7 @@
       <tab-navigator />
     </header>
     <sub-navigator v-if="hasConnection" />
+    <dialog />
     <transition name="fade">
       <router-view class="router-view" />
     </transition>
@@ -14,6 +15,7 @@
 <script lang="ts">
 import TabNavigator from '@/components/Tab/TabNavigator/TabNavigator.vue'
 import SubNavigator from '@/components/Tab/SubNavigator/SubNavigator.vue'
+import Dialog from '@/components/Generic/Dialog/Dialog.vue'
 import * as v from '@vue/composition-api'
 import store from '@/store'
 import { Tab } from '@/store/modules/tabs/contracts.ts'
@@ -48,6 +50,7 @@ export default v.defineComponent({
   components: {
     TabNavigator,
     SubNavigator,
+    Dialog,
   },
   setup(props, { root }: v.SetupContext) {
     const state = v.reactive({

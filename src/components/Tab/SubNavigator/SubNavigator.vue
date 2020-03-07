@@ -32,7 +32,7 @@ export default v.defineComponent({
         to: {
           name: 'tab-structure',
         },
-        icon:  'code-branch',
+        icon:  'igloo',
         size:  '2x',
         title: 'Structure',
       },
