@@ -18,7 +18,10 @@
     "@fortawesome/vue-fontawesome": "^0.1.9",
     "@vue/composition-api": "^0.4.0",
     "core-js": "^3.6.4",
+    "direct-vuex": "^0.10.4",
     "electron-builder": "^22.3.2",
+    "mousetrap": "^1.6.5",
+    "mysql": "^2.18.1",
     "vue": "^2.6.11",
     "vue-router": "^3.1.5",
     "vuex": "^3.1.2",
@@ -42,7 +45,7 @@
     "node-sass": "^4.12.0",
     "prettier": "^1.19.1",
     "sass-loader": "^8.0.2",
-    "typescript": "~3.7.5",
+    "typescript": "^3.8.3",
     "vue-cli-plugin-electron-builder": "~1.4.5",
     "vue-template-compiler": "^2.6.11"
   }
