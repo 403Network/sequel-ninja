@@ -1,5 +1,10 @@
 <template>
-  <router-link :to="item.to" class="subnav__link" exact-active-class="subnav__link--selected">
+  <router-link
+    :to="item.to"
+    class="subnav__link"
+    exact-active-class="subnav__link--selected"
+    :class="[item.class, { disabled: isDisabled(item) }]"
+  >
     <font-awesome-icon :icon="item.icon" :size="item.size" />
     <span v-text="item.title" />
   </router-link>
@@ -14,6 +19,20 @@ export default v.defineComponent({
     item: {
       required: true,
     },
+  },
+  setup (props: any, context: v.SetupContext) {
+    const isDisabled = (item: any) => {
+      const r = context.root.$router.resolve(item.to).resolved.meta.disabled
+      console.log(r)
+      return r
+    }
+
+    const check = () => false
+
+    return {
+      isDisabled,
+      check,
+    }
   },
 })
 </script>
@@ -34,7 +53,11 @@ export default v.defineComponent({
     background: rgba(0,0,0,0.05);
     color: $highlight-color;
   }
-
+  &.disabled {
+    pointer-events: none;
+    cursor: default;
+    opacity: 0.3;
+  }
   svg {
     display: inline-block;
   }

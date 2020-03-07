@@ -19,6 +19,7 @@ interface NavItem {
   icon: string
   size: string
   title: string
+  class?: any
 }
 
 export default v.defineComponent({
@@ -27,6 +28,7 @@ export default v.defineComponent({
     SubNavLink,
   },
   setup(props, context: v.SetupContext) {
+    console.log(context.root.$router)
     const navItems: NavItem[] = [
       {
         to: {
