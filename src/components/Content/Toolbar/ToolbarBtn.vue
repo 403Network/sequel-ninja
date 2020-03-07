@@ -52,6 +52,9 @@ export default v.defineComponent({
   &:last-child {
     border-right-width: 1px;
   }
+  &:first-child {
+    border-left-width: 0;
+  }
   &:disabled {
     color: lighten(black, 70%);
   }

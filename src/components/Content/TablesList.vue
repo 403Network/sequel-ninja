@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="table-list">
     <h3>Tables</h3>
     <ul tabindex="1">
       <li v-for="(table, index) in state.tables" ref="tableNameItems" :key="index" :tabindex="index" :class="selectedTableClasses(table.name)" @mousedown="selectTable(table)">
@@ -78,11 +78,12 @@ export default v.defineComponent({
 </script>
 
 <style scoped>
-div {
+.table-list {
   min-width: 220px;
   display: flex;
   flex-direction: column;
   position: relative;
+  z-index: 2;
 }
 h3 {
   text-align: left;

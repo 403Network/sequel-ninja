@@ -11,7 +11,7 @@ const vuexLocal = new VuexPersistence<any>({
 })
 
 const { store, rootActionContext, moduleActionContext } = createDirectStore(
-  { 
+  {
     modules: {
       tabs,
       favourites,
