@@ -18,7 +18,7 @@
     "@fortawesome/vue-fontawesome": "^0.1.9",
     "@vue/composition-api": "^0.4.0",
     "core-js": "^3.6.4",
-    "direct-vuex": "^0.10.4",
+    "direct-vuex": "https://github.com/403Network/direct-vuex",
     "electron-builder": "^22.3.2",
     "mousetrap": "^1.6.5",
     "mysql": "^2.18.1",
