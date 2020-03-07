@@ -13,8 +13,33 @@ export default new VueRouter(<any>{
       component: Tab,
       children:  [
         {
-          name:      'tab-home',
+          name:      'tab-content',
           path:      '/:uid',
+          component: Content,
+        },
+        {
+          name:      'tab-structure',
+          path:      '/:uid/structure',
+          component: Content,
+        },
+        {
+          name:      'tab-relations',
+          path:      '/:uid/relations',
+          component: Content,
+        },
+        {
+          name:      'tab-triggers',
+          path:      '/:uid/triggers',
+          component: Content,
+        },
+        {
+          name:      'tab-tableinfo',
+          path:      '/:uid/tableinfo',
+          component: Content,
+        },
+        {
+          name:      'tab-query',
+          path:      '/:uid/query',
           component: Content,
         },
       ],

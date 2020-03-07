@@ -1,7 +1,7 @@
 <template>
-  <div class="ui-table">
+  <div ref="component" class="ui-table">
     <div class="ui-table__wrapper" @mousedown="selectReset(null)">
-      <table v-if="fields" ref="table" class="table">
+      <table v-if="fields" ref="table" class="table" :class="blurred ? 'table--blurred' : null">
         <thead>
           <tr class="row row--th">
             <th v-for="(field, index) in fields" :key="index" ref="tableThs" class="cell cell--th" @mousedown="setSort(field.name)">
@@ -17,7 +17,16 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(row, index) in sortedRows" :key="index" :tabindex="index" class="row" :class="rowClasses(index)" @mousedown.exact.stop="selectOnly(index)" @mousedown.shift.exact.stop="selectTo(index)" @mousedown.meta.stop="selectToggle(index)">
+          <tr
+            v-for="(row, index) in sortedRows"
+            :key="index"
+            :tabindex="index"
+            class="row"
+            :class="rowClasses(index)"
+            @mousedown.exact.stop="selectOnly(index)"
+            @mousedown.shift.exact.stop="selectTo(index)"
+            @mousedown.meta.stop="selectToggle(index)"
+          >
             <td v-for="(item, itemIndex) in Object.keys(row)" :key="itemIndex" class="cell">
               <div class="cell__overflow">
                 <span class="cell__content">{{ row[fields[itemIndex].name] }}</span>
@@ -46,6 +55,7 @@ export default {
   props: ['fields', 'rows'],
   data() {
     return {
+      blurred:            true,
       selectedRowIndexes: [],
       mostRecentRowIndex: null,
       sorting:            {
@@ -56,6 +66,9 @@ export default {
     }
   },
   computed: {
+    selectedRows () {
+      return this.selectedRowIndexes.map(index => this.rows[index])
+    },
     sortedRows() {
       if (!this.sorting.fieldName) {
         return this.rows
@@ -70,10 +83,13 @@ export default {
     },
   },
   watch: {
+    selectedRows(rows) {
+      this.$emit('selected', rows)
+    },
     fields: {
       immediate: true,
       deep:      true,
-      handler:   function() {
+      handler() {
         if (this.fields.length === 0) {
           return
         }
@@ -94,10 +110,13 @@ export default {
     document.removeEventListener('mousedown', this.deselectOnBlur)
   },
   methods: {
-    isSortedField(fieldName) {
+    markFocus () {
+      this.blurred = false
+    },
+    isSortedField (fieldName) {
       return this.sorting.fieldName === fieldName
     },
-    setSort(fieldName) {
+    setSort (fieldName) {
       if (this.sorting.fieldName === fieldName) {
         if (this.sorting.reverse) {
           this.sorting.fieldName = null
@@ -110,15 +129,18 @@ export default {
         this.sorting.reverse = false
       }
     },
-    selectReset() {
+    selectReset () {
       this.selectedRowIndexes = []
       this.mostRecentRowIndex = null
+      this.blurred = true
     },
-    selectOnly(rowIndex) {
+    selectOnly (rowIndex) {
       this.selectedRowIndexes = [rowIndex]
       this.mostRecentRowIndex = rowIndex
+      this.blurred = false
     },
-    selectTo(rowIndex) {
+    selectTo (rowIndex) {
+      this.blurred = false
       // const findRow = this.selectedRowIndexes.findIndex(selectedRowIndex => selectedRowIndex === rowIndex)
       if (this.mostRecentRowIndex === null) {
         // No rows selected, start from the top
@@ -178,6 +200,7 @@ export default {
       }
     },
     selectToggle(rowIndex) {
+      this.blurred = false
       const findRow = this.selectedRowIndexes.findIndex(
         selectedRowIndex => selectedRowIndex === rowIndex,
       )
@@ -186,15 +209,9 @@ export default {
         // The rows have been shifted -1
         // Higher than the one we've selected
 
-        if (
-          this.selectedRowIndexes.findIndex(sIndex => sIndex === rowIndex + 1) >
-          -1
-        ) {
+        if (this.selectedRowIndexes.findIndex(sIndex => sIndex === rowIndex + 1) > -1) {
           this.mostRecentRowIndex = rowIndex + 1
-        } else if (
-          this.selectedRowIndexes.findIndex(sIndex => sIndex === rowIndex - 1) >
-          -1
-        ) {
+        } else if (this.selectedRowIndexes.findIndex(sIndex => sIndex === rowIndex - 1) > -1) {
           this.mostRecentRowIndex = rowIndex - 1
         }
       } else {
@@ -204,11 +221,7 @@ export default {
     },
     rowClasses(rowIndex) {
       return [
-        this.selectedRowIndexes.findIndex(
-          selectedRowIndex => selectedRowIndex === rowIndex,
-        ) > -1
-          ? 'row--selected selected'
-          : null,
+        this.selectedRowIndexes.findIndex(selectedRowIndex => selectedRowIndex === rowIndex) > -1 ? 'row--selected selected' : null,
       ]
     },
     adjustSingleColumn(e) {
@@ -249,14 +262,16 @@ export default {
     gripMouseUp() {
       this.grip = { ...initialGrip }
     },
-    deselectOnBlur() {
-      this.selectedRowIndexes = []
+    deselectOnBlur(e) {
+      if (!e.path.find(path => path === this.$refs.component)) {
+        this.blurred = true
+      }
     },
   },
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .ui-table {
   display: flex;
   flex-direction: column;
@@ -272,11 +287,12 @@ export default {
     #f7f7f7
   );
   background-size: 100% 40px;
+  background-position: 0 20px;
   overflow: scroll;
   user-select: none;
   position: relative;
 }
-table {
+.table {
   border-collapse: separate;
   border-spacing: 0;
   table-layout: fixed;
@@ -284,6 +300,11 @@ table {
   font-size: 0.9rem;
   position: absolute;
   top: 0;
+  &--blurred {
+    .row--selected {
+      background: #b9b9b9;
+    }
+  }
 }
 tbody {
   background: linear-gradient( to bottom, white, white 50%, #f7f7f7 50%, #f7f7f7 );
@@ -325,37 +346,43 @@ tr {
   outline: none;
 }
 .row {
+  &--selected {
+    background: $highlight-color;
+    color: white;
+    .cell {
+      border-bottom: 1px solid white;
+    }
+  }
+  &--th {
+    box-shadow: 0 0 8px -3px black;
+  }
 }
-.row--selected {
-  background: #dc56a7;
-  color: white;
-}
-.row--th {
-  box-shadow: 0 0 8px -3px black;
-}
+
 .cell {
+  border-bottom: 1px solid transparent;
+  &--th {
+    background: linear-gradient(to bottom, white, whitesmoke);
+    border-bottom: 1px solid #d2d2d2;
+    font-weight: normal;
+    z-index: 1;
+    position: sticky;
+    top: 0;
+  }
+  &__content {
+    display: inline-block;
+    padding: 0 5px;
+  }
+  &__arrow {
+    position: absolute;
+    right: 8px;
+    top: 1px;
+    &--reverse {
+      transform: rotateX(180deg);
+      top: -3px;
+    }
+  }
 }
-.cell--th {
-  background: linear-gradient(to bottom, white, whitesmoke);
-  border-bottom: 1px solid #d2d2d2;
-  font-weight: normal;
-  z-index: 1;
-  position: sticky;
-  top: 0;
-}
-.cell__content {
-  display: inline-block;
-  padding: 0 5px;
-}
-.cell__arrow {
-  position: absolute;
-  right: 8px;
-  top: 1px;
-}
-.cell__arrow--reverse {
-  transform: rotateX(180deg);
-  top: -3px;
-}
+.cell__arrow
 .cell__grip {
   top: 0;
   right: 0;

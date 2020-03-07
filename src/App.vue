@@ -4,6 +4,7 @@
       <div>Sequel Ninja</div>
       <tab-navigator />
     </header>
+    <sub-navigator v-if="hasConnection" />
     <transition name="fade">
       <router-view class="router-view" />
     </transition>
@@ -12,6 +13,7 @@
 
 <script lang="ts">
 import TabNavigator from '@/components/Tab/TabNavigator/TabNavigator.vue'
+import SubNavigator from '@/components/Tab/SubNavigator/SubNavigator.vue'
 import * as v from '@vue/composition-api'
 import store from '@/store'
 import { Tab } from '@/store/modules/tabs/contracts.ts'
@@ -45,6 +47,7 @@ export default v.defineComponent({
   name:       'App',
   components: {
     TabNavigator,
+    SubNavigator,
   },
   setup(props, { root }: v.SetupContext) {
     const state = v.reactive({
@@ -53,6 +56,10 @@ export default v.defineComponent({
 
     useAppTabCoordinator(state.tabs, root)
     useAppMouseBindings(state.tabs as Tab[])
+
+    return {
+      hasConnection: true,
+    }
   },
 })
 </script>

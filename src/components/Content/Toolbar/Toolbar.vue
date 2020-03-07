@@ -1,6 +1,8 @@
 <template>
   <div class="toolbar">
-    <div class="toolbar-slot toolbar-slot--left" />
+    <div class="toolbar-slot toolbar-slot--left">
+      <slot name="left" />
+    </div>
     <div class="toolbar-slot toolbar-slot--right">
       <slot name="right" />
     </div>
@@ -34,7 +36,7 @@ export default v.defineComponent({
 .toolbar-slot {
   flex-grow: 1;
   width: 50%;
-  padding: 0 1rem;
+  padding: 0 1rem 0 0;
   &--left {
 
   }
