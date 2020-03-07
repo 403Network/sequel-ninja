@@ -1,7 +1,7 @@
 <template>
   <div class="router-view--flex">
-    <tables-list tabindex="1" />
-    <ui-table :rows="state.selectedTable.results" :fields="state.selectedTable.fields" class="grow" tabindex="2" @selected="rowsSelected">
+    <tables-list />
+    <ui-table :rows="state.selectedTable.results" :fields="state.selectedTable.fields" class="grow" @selected="rowsSelected">
       <toolbar :page="state.selectedTable.page" :next-page="state.selectedTable.nextPage" :prev-page="state.selectedTable.prevPage">
         <template slot="left">
           <toolbar-btn :disabled="true" shadowed wide>

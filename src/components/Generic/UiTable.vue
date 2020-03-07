@@ -382,7 +382,6 @@ tr {
     }
   }
 }
-.cell__arrow
 .cell__grip {
   top: 0;
   right: 0;
