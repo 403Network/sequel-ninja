@@ -245,6 +245,7 @@ export default {
       this.$refs.table.style.width = totalThWidth + 'px'
     },
     gripMouseDown(e) {
+      document.body.classList.add('dragging')
       const thElm = e.target.closest('.cell')
       this.grip.thElm = thElm
       this.grip.startOffset = thElm.offsetWidth - e.pageX
@@ -260,6 +261,7 @@ export default {
       }
     },
     gripMouseUp() {
+      document.body.classList.remove('dragging')
       this.grip = { ...initialGrip }
     },
     deselectOnBlur(e) {

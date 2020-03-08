@@ -67,7 +67,7 @@ export default v.defineComponent({
 })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 header {
   background: linear-gradient(to bottom, rgba(238, 238, 238, 1), #ecebeb);
 }
@@ -94,6 +94,9 @@ body {
   flex-direction: column;
   user-select: none;
   overflow: hidden;
+}
+body.dragging {
+  cursor: col-resize !important;
 }
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
