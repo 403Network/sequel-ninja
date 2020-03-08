@@ -22,6 +22,10 @@ export default v.defineComponent({
       type:    Boolean,
       default: false,
     },
+    left: {
+      type:    Boolean,
+      default: false,
+    },
   },
   setup (props: ToolbarBtnProps, context: v.SetupContext) {
     const state = v.reactive({
@@ -52,9 +56,6 @@ export default v.defineComponent({
   &:last-child {
     border-right-width: 1px;
   }
-  &:first-child {
-    border-left-width: 0;
-  }
   &:disabled {
     color: lighten(black, 70%);
   }
@@ -71,6 +72,9 @@ export default v.defineComponent({
   }
   &--wide {
     width: $toolbar-height * 1.5;
+  }
+  &--left {
+    border-left-width: 0;
   }
   &--shadowed {
     > * {
