@@ -8,9 +8,7 @@
               <div class="cell__overflow">
                 <span class="cell__content">{{ field.name }}</span>
               </div>
-              <div v-if="isSortedField(field.name)" class="cell__arrow" :class="sorting.reverse ? 'cell__arrow--reverse' : ''">
-                ^
-              </div>
+              <div v-if="isSortedField(field.name)" class="cell__arrow" :class="sorting.reverse ? 'cell__arrow--reverse' : ''">^</div>
               <div class="cell__grip" @mousedown.stop="gripMouseDown" @dblclick="adjustSingleColumn" />
             </th>
             <th ref="" class="cell cell--th cell--th-remainder" />
@@ -20,12 +18,15 @@
           <tr
             v-for="(row, index) in sortedRows"
             :key="index"
+            :ref="`row-${index}`"
             :tabindex="index"
             class="row"
             :class="rowClasses(index)"
             @mousedown.exact.stop="selectOnly(index)"
-            @mousedown.shift.exact.stop="selectTo(index)"
+            @mousedown.shift.exact.stop="selectTo(index, $event)"
             @mousedown.meta.stop="selectToggle(index)"
+            @keydown.shift.up.exact="selectToAbove(index, $event)"
+            @keydown.shift.down.exact="selectToBelow(index, $event)"
           >
             <td v-for="(item, itemIndex) in Object.keys(row)" :key="itemIndex" class="cell">
               <div class="cell__overflow">
@@ -139,7 +140,15 @@ export default {
       this.mostRecentRowIndex = rowIndex
       this.blurred = false
     },
-    selectTo (rowIndex) {
+    selectToAbove(rowIndex, $event) {
+      $event.target.closest('tr').previousSibling.focus()
+      this.selectTo(rowIndex - 1)
+    },
+    selectToBelow(rowIndex, $event) {
+      $event.target.closest('tr').nextSibling.focus()
+      this.selectTo(rowIndex + 1)
+    },
+    selectTo (rowIndex, $event) {
       this.blurred = false
       // const findRow = this.selectedRowIndexes.findIndex(selectedRowIndex => selectedRowIndex === rowIndex)
       if (this.mostRecentRowIndex === null) {
@@ -159,6 +168,7 @@ export default {
             if (loopForward <= rowIndex) {
               this.selectedRowIndexes.push(loopForward)
               if (loopForward == rowIndex) {
+                this.focusRowByIndex(loopForward)
                 break
               }
             } else {
@@ -177,14 +187,15 @@ export default {
 
       let loopBackward = this.mostRecentRowIndex - 1
       while (loopBackward > -1) {
-        const loopBackwardSelected = this.selectedRowIndexes.findIndex(
-          index => index === loopBackward,
-        )
+        const loopBackwardSelected = this.selectedRowIndexes.findIndex(index => index === loopBackward)
         if (rowIndex < this.mostRecentRowIndex) {
           if (loopBackwardSelected === -1) {
             if (loopBackward >= rowIndex) {
               this.selectedRowIndexes.push(loopBackward)
-              if (loopBackward == rowIndex) break
+              if (loopBackward == rowIndex) {              
+                this.focusRowByIndex(loopForward)
+                break
+              }
             } else {
               break
             }
@@ -268,6 +279,9 @@ export default {
       if (!e.path.find(path => path === this.$refs.component)) {
         this.blurred = true
       }
+    },
+    focusRowByIndex(rowIndex) {
+      this.$refs[`row-${rowIndex}`][0].focus()
     },
   },
 }
