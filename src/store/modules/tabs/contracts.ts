@@ -18,6 +18,10 @@ export interface TableData extends RawTableData {
   name: string
   page: number
   totalPages: number
+  rowPosition: {
+    start: number
+    end: number
+  }
 }
 
 export interface TabTableTarget {

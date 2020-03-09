@@ -25,11 +25,15 @@ const createNewTab = (uid: string): Tab => {
     disabled:      false,
     tables:        [],
     selectedTable: {
-      name:       '',
-      page:       1,
-      totalPages: 1,
-      fields:     [],
-      results:    [],
+      name:        '',
+      page:        1,
+      totalPages:  1,
+      fields:      [],
+      results:     [],
+      rowPosition: {
+        start: 0,
+        end:   0,
+      },
     } as TableData,
   }
 }
@@ -53,9 +57,19 @@ const actions = {
   async getTableRows({ commit }: any, { tab, table, page }: TabTableTarget & { page: number }) {
     const data = await table.list(page)
     const totalRows = await table.count()
-    const totalPages = Math.round(totalRows / TableRepo.pageLength)
-
-    commit('SET_SELECTED_TABLE_DATA', { uid: tab.uid, data, page, totalPages })
+    // 5*3-3+1
+    commit('SET_SELECTED_TABLE_DATA', {
+      data,
+      page,
+      totalRows,
+      uid:         tab.uid,
+      startRow:    page * data.results.length - data.results.length,
+      rowPosition: {
+        start: page * data.results.length - data.results.length + 1,
+        end:   page * data.results.length,
+      },
+      totalPages: Math.round(totalRows / TableRepo.pageLength),
+    })
   },
   async loadTables({ commit }: any, tab: Tab) {
     const data: RawTableData = await tab.connection.repo.showTables()
@@ -127,13 +141,14 @@ const mutations = {
     if (!tab) throw mutationExceptions.TAB_NOT_FOUND
     tab.selectedTable.name = tableName
   },
-  SET_SELECTED_TABLE_DATA(state: TabState, { uid, data, page, totalPages }: { uid: string, data: any, page: number, totalPages: number }) {
+  SET_SELECTED_TABLE_DATA(state: TabState, { uid, data, page, totalPages, rowPosition }: { uid: string, data: any, page: number, totalPages: number, rowPosition: { start: number, end: number } }) {
     const tab = state.tabs.find(tab => tab.uid === uid)
     if (!tab) throw mutationExceptions.TAB_NOT_FOUND
     tab.selectedTable.results = [...data.results]
     tab.selectedTable.fields = [...data.fields]
     tab.selectedTable.page = page
     tab.selectedTable.totalPages = totalPages
+    tab.selectedTable.rowPosition = rowPosition
   },
   SET_TABLES(state: TabState, { uid, tables }: { uid: string, tables: TableRepo[] }) {
     const tab = state.tabs.find((tab: Tab) => tab.uid === uid)

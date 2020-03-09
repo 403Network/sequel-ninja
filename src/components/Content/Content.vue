@@ -8,12 +8,16 @@
             <font-awesome-icon icon="plus" size="sm" />
             <font-awesome-icon icon="plus" size="sm" />
           </toolbar-btn>
-          <toolbar-btn :disabled="!state.hasDeletable" wide @click.stop.prevent>
+          <toolbar-btn :disabled="!state.hasSelected" wide @click.stop.prevent>
             <font-awesome-icon icon="minus" size="sm" />
           </toolbar-btn>
           <toolbar-btn :disabled="true" wide>
             <font-awesome-icon icon="sync" size="sm" />
           </toolbar-btn>
+          <toolbar-copy v-if="state.hasRows">
+            <span>Rows {{ state.rowsRangeCopy }} of {{ state.totalRows }} from table</span>
+            <span v-if="state.hasSelected">; {{ state.rowsSelectedCopy }}</span>
+          </toolbar-copy>
         </template>
 
         <template slot="right">
@@ -33,6 +37,7 @@
 import TablesList from '@/components/Content/TablesList'
 import Toolbar from '@/components/Content/Toolbar/Toolbar'
 import ToolbarBtn from '@/components/Content/Toolbar/ToolbarBtn'
+import ToolbarCopy from '@/components/Content/Toolbar/ToolbarCopy'
 import UiTable from '@/components/Generic/UiTable'
 import { mapGetters } from 'vuex'
 import * as v from '@vue/composition-api'
@@ -42,19 +47,25 @@ export default v.defineComponent({
   components: {
     Toolbar,
     ToolbarBtn,
+    ToolbarCopy,
     TablesList,
     UiTable,
   },
   setup () {
     const state = v.reactive({
-      selectedTable: v.computed(() => store.getters.tabs.selectedTable),
-      selectedTab:   v.computed(() => store.getters.tabs.selectedTab),
-      table:         v.computed(() => state.selectedTab.tables.find(table => table.name === state.selectedTable.name)),
-      hasPrev:       v.computed(() => state.selectedTable.page > 1),
-      hasNext:       v.computed(() => state.selectedTable.page < state.selectedTable.totalPages),
-      selectedRows:  0,
-      hasDeletable:  v.computed(() => state.selectedRows.length > 0),
+      selectedTable:    v.computed(() => store.getters.tabs.selectedTable),
+      selectedTab:      v.computed(() => store.getters.tabs.selectedTab),
+      table:            v.computed(() => state.selectedTab.tables.find(table => table.name === state.selectedTable.name)),
+      hasPrev:          v.computed(() => state.selectedTable.page > 1),
+      hasNext:          v.computed(() => state.selectedTable.page < state.selectedTable.totalPages),
+      selectedRows:     0,
+      rowOrRows:        v.computed(() => state.selectedRows.length > 1 ? 'rows' : 'row'),
+      rowsSelectedCopy: v.computed(() => `${state.selectedRows.length} ${state.rowOrRows} selected`),
+      rowsRangeCopy:    v.computed(() => `${state.selectedTable.rowPosition.start} - ${state.selectedTable.rowPosition.end}`),
+      hasSelected:      v.computed(() => state.selectedRows.length > 0),
+      hasRows:          v.computed(() => state.selectedTable.results.length > 0),
     })
+
 
 
     const refreshPage = () => store.dispatch.tabs.deleteRow({ table: state.table, tab: state.selectedTab, page: state.selectedTable.page })
