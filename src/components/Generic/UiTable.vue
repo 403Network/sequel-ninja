@@ -56,41 +56,39 @@ export default {
   props: ['fields', 'rows'],
   data() {
     return {
-      blurred:            true,
-      selectedRowIndexes: [],
-      mostRecentRowIndex: null,
-      sorting:            {
+      blurred:    true,
+      scanAnchor: null,
+      sorting:    {
         fieldName: null,
         reverse:   false,
       },
-      grip: { ...initialGrip },
+      grip:   { ...initialGrip },
+      rowMap: new Map([]),
     }
   },
   computed: {
-    selectedRows () {
-      return this.selectedRowIndexes.map(index => this.rows[index])
-    },
-    sortedRows() {
-      if (!this.sorting.fieldName) {
-        return this.rows
-      }
-      const left = this.sorting.reverse ? -1 : 1
-      const right = this.sorting.reverse ? 1 : -1
-      return [...this.rows].sort((a, b) => {
-        return a[this.sorting.fieldName] > b[this.sorting.fieldName]
-          ? left
-          : right
-      })
+    sortedRows () {
+      return this.rows
     },
   },
   watch: {
-    selectedRows(rows) {
-      this.$emit('selected', rows)
+    rowMap: {
+      deep: true,
+      handler () {
+        this.$emit('selected', this.rowMap.)
+      },
+    },
+    rows: {
+      immediate: true,
+      deep:      true,
+      handler (rows) {
+        this.rowMap = new Map(this.rows.map((row, index) => [index, false]))
+      },
     },
     fields: {
       immediate: true,
       deep:      true,
-      handler() {
+      handler () {
         if (this.fields.length === 0) {
           return
         }
@@ -130,109 +128,116 @@ export default {
         this.sorting.reverse = false
       }
     },
-    selectReset () {
-      this.selectedRowIndexes = []
-      this.mostRecentRowIndex = null
-      this.blurred = true
+    selectReset (blur = true) {
+      this.selectedRowIndexes = new Map(this.rows.map((row, index) => [index, false]))
+      if (blur) {
+        this.scanAnchor = null
+        this.blurred = true
+      }
     },
     selectOnly (rowIndex) {
-      this.selectedRowIndexes = [rowIndex]
-      this.mostRecentRowIndex = rowIndex
+      this.selectReset(false)
+      this.rowMap.set(rowIndex, true)
+      this.scanAnchor = rowIndex
       this.blurred = false
     },
     selectToAbove(rowIndex, $event) {
       $event.target.closest('tr').previousSibling.focus()
-      this.selectTo(rowIndex - 1)
+      this.selectTo(rowIndex - 1, true)
     },
     selectToBelow(rowIndex, $event) {
       $event.target.closest('tr').nextSibling.focus()
-      this.selectTo(rowIndex + 1)
+      this.selectTo(rowIndex + 1, true)
     },
-    selectTo (rowIndex, $event) {
+    selectTo (rowIndex, connectSiblings = false) {
       this.blurred = false
-      // const findRow = this.selectedRowIndexes.findIndex(selectedRowIndex => selectedRowIndex === rowIndex)
-      if (this.mostRecentRowIndex === null) {
+      
+      if (this.scanAnchor === null) {
         // No rows selected, start from the top
         this.selectedRowIndexes = _.range(0, rowIndex + 1)
         return
       }
 
-      let loopForward = this.mostRecentRowIndex + 1
-      while (loopForward < this.sortedRows.length) {
-        const loopForwardSelected = this.selectedRowIndexes.findIndex(
-          index => index === loopForward,
-        )
-        // If the row clicked is higher than the most recently clicked row
-        if (rowIndex > this.mostRecentRowIndex) {
-          if (loopForwardSelected === -1) {
-            if (loopForward <= rowIndex) {
-              this.selectedRowIndexes.push(loopForward)
-              if (loopForward == rowIndex) {
-                this.focusRowByIndex(loopForward)
-                break
-              }
-            } else {
-              break
-            }
-          } else if (loopForward > rowIndex) {
-            Vue.delete(this.selectedRowIndexes, loopForwardSelected)
-          }
-        } else if (loopForwardSelected > -1) {
-          Vue.delete(this.selectedRowIndexes, loopForwardSelected)
-        } else {
-          break
-        }
-        loopForward++
+      this.scanRowsTo(rowIndex, true)
+      this.scanRowsTo(rowIndex, false)
+    },
+    _isMovingInChosenDirection (from, to, incrementForward) {
+      if (incrementForward) {
+        return to > from
       }
-
-      let loopBackward = this.mostRecentRowIndex - 1
-      while (loopBackward > -1) {
-        const loopBackwardSelected = this.selectedRowIndexes.findIndex(index => index === loopBackward)
-        if (rowIndex < this.mostRecentRowIndex) {
-          if (loopBackwardSelected === -1) {
-            if (loopBackward >= rowIndex) {
-              this.selectedRowIndexes.push(loopBackward)
-              if (loopBackward == rowIndex) {              
-                this.focusRowByIndex(loopForward)
-                break
-              }
-            } else {
-              break
-            }
-          } else if (loopBackward < rowIndex) {
-            Vue.delete(this.selectedRowIndexes, loopBackwardSelected)
-          }
-        } else if (loopBackwardSelected > -1) {
-          Vue.delete(this.selectedRowIndexes, loopBackwardSelected)
-        } else {
+      return to < from
+    },
+    _hasPassedChosen (scan, chosen, incrementForward) {
+      if (incrementForward) {
+        return scan > chosen
+      }
+      return scan < chosen
+    },
+    _scanner(scanRow) {
+      const incrementer = incrementForward ? 1 : -1
+      const endPosition = incrementForward ? 0 : this.rows.length
+      let scanIndex = this.scanAnchor
+      // Starting from the most recently selected row, crawl (forward, or backward)
+      while (scanIndex !== endPosition) {
+        scanIndex += incrementer
+        if (!scanRow(scanIndex, chosenRowIndex, incrementForward)) {
           break
         }
-        loopBackward--
       }
     },
-    selectToggle(rowIndex) {
-      this.blurred = false
-      const findRow = this.selectedRowIndexes.findIndex(
-        selectedRowIndex => selectedRowIndex === rowIndex,
-      )
-      if (findRow > -1) {
-        this.selectedRowIndexes.splice(findRow, 1)
-        // The rows have been shifted -1
-        // Higher than the one we've selected
-
-        if (this.selectedRowIndexes.findIndex(sIndex => sIndex === rowIndex + 1) > -1) {
-          this.mostRecentRowIndex = rowIndex + 1
-        } else if (this.selectedRowIndexes.findIndex(sIndex => sIndex === rowIndex - 1) > -1) {
-          this.mostRecentRowIndex = rowIndex - 1
-        }
-      } else {
-        this.selectedRowIndexes.push(rowIndex)
-        this.mostRecentRowIndex = rowIndex
+    _scanDivergentRow (scanIndex, chosenRowIndex, incrementForward) {
+      // Stop processing divergent rows at the first gap
+      if (this.rowMap.get(scanIndex) === false) {
+        return false
       }
+      // Crawling away from the click event, let's delete any selected direct-siblings
+      this.selectSet(scanIndex, false)
+    },
+    _scanConvergentRow (scanIndex, chosenRowIndex, incrementForward) {
+      // Are we crawling towards in the direction of chosenRow from scanAnchor (even if we've passed it)
+      // If our current scan is not selected
+      if (!scanIndexSelectedVal) {
+        if (!this.hasPassedChosen(scanIndex, chosenRowIndex, incrementForward)) {
+          this.selectRow(scanIndex, true)
+        } else if (this.rowMap.get(scanIndex)) {
+          this.focusRow(scanIndex)
+        } else {
+          return false
+        }
+      } else if (this.hasPassed(scanIndex, chosenRowIndex, incrementForward)) {
+        // The scanned row is selected, but we've passed the chosenRowIndex. We'll de-select it.
+        this.setRowMapItem(scanIndex, false)
+        this.rowMap.set(scanIndex, false)
+      }
+    },
+    scanRowsTo (chosenRowIndex, incrementForward) {
+      this._scanner((scanIndex, chosenRowIndex, incrementForward) => {
+        if (this._isMovingInChosenDirection(scanIndex, incrementForward)) {
+          return this._scanConvergentRow(scanIndex, chosenRowIndex, incrementForward)
+        }
+        if (this.isRowSelected(scanIndex)) {
+          return this._scanDivergentRow(scanIndex, chosenRowIndex, incrementForward)
+        }
+        return false
+      })
+    },
+    isRowSelected (scanIndex) {
+      return this.rowMap.get(scanIndex)
+    },
+    selectSet (scanRow, value, focus) {
+      this.rowMap.set(scanIndex, true)
+      if (focus) {
+        this.focusRow(scanIndex)
+      }
+    },
+    selectToggle (rowIndex) {
+      this.blurred = false
+      this.rowMap.set(rowIndex, !this.rowMap.get(rowIndex))
+      this.scanAnchor = rowIndex
     },
     rowClasses(rowIndex) {
       return [
-        this.selectedRowIndexes.findIndex(selectedRowIndex => selectedRowIndex === rowIndex) > -1 ? 'row--selected selected' : null,
+        this.rowMap.get(rowIndex) ? 'row--selected selected' : null,
       ]
     },
     adjustSingleColumn(e) {
@@ -280,7 +285,7 @@ export default {
         this.blurred = true
       }
     },
-    focusRowByIndex(rowIndex) {
+    focusRow(rowIndex) {
       this.$refs[`row-${rowIndex}`][0].focus()
     },
   },
